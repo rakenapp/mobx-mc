@@ -1,0 +1,7 @@
+src/
+tests/
+.DS_Store
+.git
+.babelrcs
+webpack.config.js
+yarn.lock

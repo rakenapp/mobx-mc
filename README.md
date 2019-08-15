@@ -1,2 +1,2 @@
-# mobx-mx
+# mobx-mc
 Mobx Model-Collection Library

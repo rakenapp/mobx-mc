@@ -1,0 +1,51 @@
+{
+  "name": "mobx-mc",
+  "version": "1.0.0",
+  "description": "Mobx Store Model-Collection Library",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "webpack --config ./webpack.config.js --mode=production",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rakenapp/mobx-mx.git"
+  },
+  "keywords": [
+    "mobx",
+    "collection",
+    "model",
+    "store",
+    "java-script"
+  ],
+  "author": "Raken",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rakenapp/mobx-mx/issues"
+  },
+  "homepage": "https://github.com/rakenapp/mobx-mx#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "lodash.difference": "^4.5.0",
+    "lodash.forin": "^4.4.0",
+    "lodash.isempty": "^4.4.0",
+    "lodash.omit": "^4.5.0",
+    "lodash.pick": "^4.4.0",
+    "lodash.pickby": "^4.6.0",
+    "lodash.result": "^4.5.2",
+    "mobx": "^5.13.0",
+    "querystringify": "^2.1.1",
+    "uuid-v4": "^0.1.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-decorators": "^7.4.4",
+    "@babel/preset-env": "^7.5.5",
+    "babel-loader": "^8.0.6",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.6"
+  }
+}

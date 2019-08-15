@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+
+# production
+lib/
+
+# tests temporarly excluded  
+tests/
+
+# system files
+.vscode/
+.DS_Store
