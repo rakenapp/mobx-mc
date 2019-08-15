@@ -4,7 +4,7 @@
   "description": "Mobx Store Model-Collection Library",
   "main": "lib/index.js",
   "scripts": {
-    "build": "webpack --config ./webpack.config.js --mode=production",
+    "build": "babel src --out-dir lib",
     "prepare": "npm run build"
   },
   "repository": {
@@ -44,8 +44,6 @@
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-proposal-decorators": "^7.4.4",
     "@babel/preset-env": "^7.5.5",
-    "babel-loader": "^8.0.6",
-    "webpack": "^4.39.2",
-    "webpack-cli": "^3.3.6"
+    "babel-loader": "^8.0.6"
   }
 }
