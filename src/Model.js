@@ -57,6 +57,10 @@ class Model {
     if (options.parent) {
       this.parent = options.parent;
     }
+
+    if (options.rootStore) {
+      this.rootStore = options.rootStore;
+    }
   }
 
   get restAttributes() {
@@ -288,7 +292,7 @@ class Model {
     );
 
     // Save reference to the current atributes
-    const originalAttributes = this.attributes.toJS();
+    const originalAttributes = toJS(this.attributes);
 
     // Strip out attributes not defined in the restAttributes map
     if (options.stripNonRest) {
