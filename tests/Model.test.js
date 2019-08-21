@@ -1,6 +1,6 @@
 import omit from 'lodash.omit';
 import request from 'axios';
-import { observable, toJS } from 'mobx';
+import { observable } from 'mobx';
 import Model from '../src/Model';
 import Collection from '../src/Collection';
 import { userData, companyData } from './fixtures/models';
@@ -238,7 +238,7 @@ describe('Model', () => {
       });
 
 
-      expect(toJS(model.attributes)).toEqual({
+      expect(model.attributes.toJSON()).toEqual({
         title: 'Mr',
         firstName: 'John',
         lastName: 'Doe'
