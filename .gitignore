@@ -4,8 +4,7 @@ node_modules/
 # production
 lib/
 
-# tests temporarly excluded  
-tests/
+yarn-error.log
 
 # system files
 .vscode/

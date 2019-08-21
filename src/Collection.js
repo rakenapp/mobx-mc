@@ -39,6 +39,9 @@ class Collection {
     if (options.parent) {
       this.parent = options.parent;
     }
+    if (options.rootStore) {
+      this.rootStore = options.rootStore;
+    }
   }
 
   /**
@@ -47,7 +50,8 @@ class Collection {
   @computed
   get modelOptions() {
     return {
-      collection: this
+      collection: this,
+      rootStore: this.rootStore
     };
   }
 
@@ -296,6 +300,10 @@ class Collection {
   applyOptionsToModel(model) {
     if (!model.collection) {
       model.collection = this;
+    }
+
+    if (!model.rootStore && this.rootStore) {
+      model.rootStore = this.rootStore;
     }
 
     return model;
