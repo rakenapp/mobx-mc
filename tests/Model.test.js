@@ -149,7 +149,7 @@ describe('Model', () => {
     it('Returns the model.id property if it exists', () => {
       model = new Model({
         id: '5',
-        name: 'nick'
+        name: 'bill'
       });
 
       expect(model.uniqueId).toEqual('5');
@@ -343,7 +343,7 @@ describe('Model', () => {
       model.set(
         {
           name: 'John',
-          phone: '021552497',
+          phone: '012345678',
           address: '59 Rua Road'
         },
         { parse: true }
@@ -351,7 +351,7 @@ describe('Model', () => {
 
       expect(Model.prototype.parse).toHaveBeenCalledWith({
         name: 'John',
-        phone: '021552497',
+        phone: '012345678',
         address: '59 Rua Road'
       });
     });
@@ -359,35 +359,35 @@ describe('Model', () => {
     it('Sets the passed in values as observables', () => {
       model.set({
         name: 'John',
-        phone: '021552497',
+        phone: '012345678',
         address: '59 Rua Road'
       });
 
       expect(model.name).toEqual('John');
-      expect(model.phone).toEqual('021552497');
+      expect(model.phone).toEqual('012345678');
     });
 
     it('Strips out attributes that are not rest', () => {
       model.set({
         name: 'John',
-        phone: '021552497',
+        phone: '012345678',
         address: '59 Rua Road'
       });
 
       expect(model.name).toEqual('John');
-      expect(model.phone).toEqual('021552497');
+      expect(model.phone).toEqual('012345678');
       expect(model.address).not.toBeDefined();
     });
 
     it('Strips out attributes that are undefined', () => {
       model.set({
         name: 'John',
-        phone: '021552497',
+        phone: '012345678',
         address: undefined
       });
 
       expect(model.name).toEqual('John');
-      expect(model.phone).toEqual('021552497');
+      expect(model.phone).toEqual('012345678');
       expect(model.pick(['address'])).not.toBe({});
     });
   });
@@ -407,12 +407,12 @@ describe('Model', () => {
       model.set({
         id: '1',
         name: 'John',
-        phone: '021552497'
+        phone: '012345678'
       });
 
       expect(model.id).toEqual('1');
       expect(model.name).toBe('John');
-      expect(model.phone).toBe('021552497');
+      expect(model.phone).toBe('012345678');
 
       model.clear();
 
@@ -648,7 +648,7 @@ describe('Model', () => {
         firstName: 'John',
         lastName: 'Doe',
         username: 'projectmem1@rakneapp.com',
-        phone: '0989056675'
+        phone: '012345678'
       });
     });
 
@@ -879,7 +879,7 @@ describe('Model', () => {
           {
             firstName: 'Johnny',
             lastName: 'Doe',
-            username: 'nick.ryall@gmail.com',
+            username: 'lostintranslation@rakenapp.com',
             phone: '0211912340'
           },
           { wait: false }
@@ -900,7 +900,7 @@ describe('Model', () => {
                 data: {
                   firstName: 'Mike',
                   lastName: 'Doe',
-                  username: 'nick.ryall@gmail.com',
+                  username: 'lostintranslation@rakenapp.com',
                   phone: '0211912340'
                 }
               });
@@ -917,7 +917,7 @@ describe('Model', () => {
           {
             firstName: 'Mike',
             lastName: 'Doe',
-            username: 'nick.ryall@gmail.com',
+            username: 'lostintranslation@rakenapp.com',
             phone: '0211912340'
           },
           { wait: true }
@@ -939,7 +939,7 @@ describe('Model', () => {
           {
             firstName: 'Timmy',
             lastName: 'Doe',
-            username: 'nick.ryall@gmail.com',
+            username: 'lostintranslation@rakenapp.com',
             phone: '0211912340'
           },
           { wait: true }
