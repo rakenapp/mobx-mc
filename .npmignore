@@ -3,5 +3,8 @@ tests/
 .DS_Store
 .git
 .babelrcs
-webpack.config.js
+.gitignore
+yarn.lock
+jest.config.js 
+package-lock.json
 yarn.lock
