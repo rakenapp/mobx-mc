@@ -50,5 +50,5 @@
     "@babel/runtime": "^7.0.0-beta.55",
     "babel-jest": "^24.9.0",
     "jest": "^24.9.0"
-    }
+  }
 }
