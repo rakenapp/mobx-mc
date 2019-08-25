@@ -8,7 +8,7 @@ A demo-application and documentation will be available soon
 
 ```
 npm install mobx-mc
-yarn add mob-mc
+yarn add mobx-mc
 ```
 ## `Collections`
 
