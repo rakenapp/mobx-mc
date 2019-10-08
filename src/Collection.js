@@ -39,6 +39,7 @@ class Collection {
     if (options.parent) {
       this.parent = options.parent;
     }
+
     if (options.rootStore) {
       this.rootStore = options.rootStore;
     }
@@ -86,6 +87,14 @@ class Collection {
   @computed
   get length() {
     return this.models.length;
+  }
+
+  /**
+   * Gets the answer is collection empty or not
+   */
+  @computed
+  get hasModels() {
+    return this.models.length > 0;
   }
 
   /**
@@ -155,7 +164,7 @@ class Collection {
     );
 
     if (options.remove) {
-      const ids = models.map(d => d.id);
+      const ids = models.map(model => model.id);
 
       this.spliceModels(difference(this.ids(), ids));
     }
