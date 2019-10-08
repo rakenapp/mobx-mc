@@ -165,7 +165,7 @@ describe('Model', () => {
   describe('idAttribute', () => {
     beforeEach(() => {
       class SubModel extends Model {
-        get idAttribute() {
+        idAttribute() {
           return 'date';
         }
       }
@@ -176,7 +176,7 @@ describe('Model', () => {
     });
 
     it('Sets the id to the idAttribute', () => {
-      expect(model.idAttribute).toBe('date');
+      expect(model.idAttribute()).toBe('date');
       expect(model.restAttributes).toEqual(['date']);
       expect(model.id).toBe('2017-11-13');
     });
