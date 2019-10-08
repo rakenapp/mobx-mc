@@ -32,8 +32,8 @@ describe('Model', () => {
       expect(model.rootStore).toEqual(rootStore);
     });
 
-    it('Sets up an internal uuid', () => {
-      expect(model.uuid).toBeDefined();
+    it('Sets up an client uuid', () => {
+      expect(model.cid).toBeDefined();
     });
   });
 
@@ -155,10 +155,10 @@ describe('Model', () => {
       expect(model.uniqueId).toEqual('5');
     });
 
-    it('Returns the uuid property if the model is new', () => {
+    it('Returns the cid property if the model is new', () => {
       const model = new Model();
 
-      expect(model.uniqueId).toEqual(model.uuid);
+      expect(model.uniqueId).toEqual(model.cid);
     });
   });
 
@@ -228,9 +228,7 @@ describe('Model', () => {
 
       model.lastName = 'Doe';
 
-      model.save(null, {
-        method: 'post'
-      });
+      model.save();
 
       expect(request.post).toHaveBeenCalledWith('/api/me', {
         firstName: 'John',
