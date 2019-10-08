@@ -74,6 +74,13 @@ class Collection {
   }
 
   /**
+   * Gets the idAttribute used by Model
+   */
+  get modelIdAttribute() {
+    return this.model().prototype.idAttribute();
+  }
+
+  /**
    * Getter for the collection length
    */
   @computed
