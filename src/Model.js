@@ -17,7 +17,7 @@ class Model {
   @observable saving;
   @observable deleting;
 
-  get idAttribute() {
+  idAttribute() {
     return 'id';
   }
 
@@ -64,7 +64,7 @@ class Model {
   }
 
   get restAttributes() {
-    return [this.idAttribute];
+    return [this.idAttribute()];
   }
 
   /**
@@ -150,8 +150,8 @@ class Model {
     );
 
     // Set the id immediately if possible
-    if (data && data[this.idAttribute]) {
-      this.id = data[this.idAttribute];
+    if (data && data[this.idAttribute()]) {
+      this.id = data[this.idAttribute()];
     }
 
     // Parse the data
