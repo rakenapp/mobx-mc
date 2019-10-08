@@ -32,7 +32,7 @@ class Model {
       options
     );
 
-    this.uuid = uuid();
+    this.cid = uuid();
     this.fetching = false;
     this.saving = false;
     this.deleting = false;
@@ -115,7 +115,7 @@ class Model {
    * Returns either the server id or fall back to client uuid.
    */
   get uniqueId() {
-    return this.id ? this.id : this.uuid;
+    return this.id ? this.id : this.cid;
   }
 
   /**
