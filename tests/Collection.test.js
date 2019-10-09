@@ -180,7 +180,7 @@ describe('Collection', () => {
     it('Calls the correct set method for each data type', () => {
       collection = new Collection(usersData);
 
-      expect(collection.setModels).toHaveBeenCalledWith(usersData.collection, {
+      expect(collection.setModels).toHaveBeenCalledWith(usersData, {
         add: true,
         merge: true,
         remove: true
@@ -261,7 +261,7 @@ describe('Collection', () => {
 
   describe('setModels action with add option set to falsy', () => {
     beforeEach(() => {
-      collection = new Collection(usersData.collection.slice(0, 2));
+      collection = new Collection(usersData.slice(0, 2));
 
       collection.setModels(
         [
@@ -423,7 +423,7 @@ describe('Collection', () => {
     });
 
     it('Can receive an array of JSON representations', () => {
-      collection.add(usersData.collection);
+      collection.add(usersData);
 
       expect(collection.get(1).email).toEqual('lostintranslation@rakenapp.com');
       expect(collection.get(2).email).toEqual('john.jones@rakenapp.com');
@@ -432,9 +432,9 @@ describe('Collection', () => {
     it('Can receive an array of model instances', () => {
       collection = new UserCollection();
 
-      const newModel1 = new UserModel(usersData.collection[0]);
+      const newModel1 = new UserModel(usersData[0]);
 
-      const newModel2 = new UserModel(usersData.collection[1]);
+      const newModel2 = new UserModel(usersData[1]);
 
       collection.add([newModel1, newModel2]);
 
@@ -528,9 +528,9 @@ describe('Collection', () => {
     it('Accepts model instances', () => {
       collection = new UserCollection();
 
-      const newModel1 = new UserModel(usersData.collection[0]);
+      const newModel1 = new UserModel(usersData[0]);
 
-      const newModel2 = new UserModel(usersData.collection[1]);
+      const newModel2 = new UserModel(usersData[1]);
 
       collection.pushModels([newModel1, newModel2]);
 
@@ -551,7 +551,7 @@ describe('Collection', () => {
     it('Sets a reference to the collection on the child models', () => {
       collection = new UserCollection();
 
-      const newModel1 = new UserModel(usersData.collection[0]);
+      const newModel1 = new UserModel(usersData[0]);
 
       collection.pushModels([newModel1]);
 
@@ -565,7 +565,7 @@ describe('Collection', () => {
         rootStore: rootStore
       });
 
-      const newModel1 = new UserModel(usersData.collection[0]);
+      const newModel1 = new UserModel(usersData[0]);
 
       collection.pushModels([newModel1]);
 
@@ -802,7 +802,7 @@ describe('Collection', () => {
     it('Exits if called with and model id that already exists in collection', () => {
       collection = new Collection();
 
-      collection.add(usersData.collection);
+      collection.add(usersData);
 
       // No op as model with id exists
       collection.create({
