@@ -1,6 +1,6 @@
 {
   "name": "mobx-mc",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Mobx Store Model-Collection Library",
   "main": "lib/index.js",
   "scripts": {
