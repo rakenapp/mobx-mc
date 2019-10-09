@@ -31,10 +31,9 @@ class Collection {
     return;
   }
 
-  /**
+ /**
    * Apply options to a Collection
    */
-
   applyOptions(options) {
     if (options.parent) {
       this.parent = options.parent;
@@ -56,6 +55,10 @@ class Collection {
     };
   }
 
+  /**
+   * Specifies the url to request the collection
+   */
+
   url() {
     return '/';
   }
@@ -68,17 +71,17 @@ class Collection {
   }
 
   /**
+   * Gets idAttribute used by Model
+   */
+  get modelIdAttribute() {
+    return this.model().prototype.idAttribute();
+  }
+
+  /**
    * Gets the unique ids of all the items in the collection
    */
   ids() {
     return this.models.map(model => model.uniqueId);
-  }
-
-  /**
-   * Gets the idAttribute used by Model
-   */
-  get modelIdAttribute() {
-    return this.model().prototype.idAttribute();
   }
 
   /**
@@ -120,8 +123,9 @@ class Collection {
   }
 
   /**
-   * Handles full JSON payload and sets data accordingly.
+   * Handles full payload and sets data accordingly.
    */
+
   @action
   set(data, options) {
     // Merge in the any options with the default
@@ -137,12 +141,22 @@ class Collection {
     if (Array.isArray(data)) {
       this.setModels(data, options);
     } else {
-      if (data.collection) {
-        this.setModels(data.collection, options);
+      let parsedData = this.parse(data);
+
+      if (Array.isArray(parsedData)) {
+        this.setModels(parsedData, options);
       } else if (options.remove) {
         this.reset();
       }
     }
+  }
+
+  /**
+   * Return a collection of models. Assume that a payload is a collection by default.
+   * Override this in your base collection if you need to work with a preexisting API
+   */
+  parse(data) {
+    return data;
   }
 
   /**
@@ -164,13 +178,13 @@ class Collection {
     );
 
     if (options.remove) {
-      const ids = models.map(model => model.id);
+      const ids = models.map(d => d.id);
 
       this.spliceModels(difference(this.ids(), ids));
     }
 
     models.forEach(data => {
-      const model = this.get(data.id);
+      const model = this.get(data[this.modelIdAttribute]);
 
       if (model && options.merge) model.set(data, options);
 
@@ -206,7 +220,8 @@ class Collection {
    */
   @action
   getOrAdd(attributes) {
-    if (this.get(attributes.id)) return this.get(attributes.id);
+    if (this.get(attributes[this.modelIdAttribute]))
+      return this.get(attributes[this.modelIdAttribute]);
 
     return this.pushModels(attributes)[0];
   }
@@ -216,7 +231,7 @@ class Collection {
    */
   @action
   updateOrAdd(attributes) {
-    let model = this.get(attributes.id || attributes.uuid);
+    let model = this.get(attributes[this.modelIdAttribute]);
 
     if (model) {
       model.set(attributes);
@@ -238,7 +253,7 @@ class Collection {
     this.setRequestLabel('saving', true);
 
     arrayAttributes.forEach(attributes => {
-      const existingModel = this.get(attributes.id);
+      const existingModel = this.get(attributes[this.modelIdAttribute]);
       if (existingModel) {
         originalAttributes.push(existingModel.attributes.toJS());
         existingModel.set(attributes);
@@ -309,9 +324,8 @@ class Collection {
   }
 
   /**
-   * Add options to an added model
+   * Add options to a model
    */
-
   @action
   applyOptionsToModel(model) {
     if (!model.collection) {
@@ -387,6 +401,7 @@ class Collection {
             this.requestCanceller = cancel;
           }),
           params: options.params,
+          ...options.axios,
           paramsSerializer: params => {
             return qs.stringify(params);
           }
@@ -533,7 +548,7 @@ class Collection {
     const CollectionModel = this.model();
 
     const model = new CollectionModel(
-      { [CollectionModel.prototype.idAttribute]: id },
+      { [this.modelIdAttribute]: id },
       {
         ...this.modelOptions,
         parse: true
