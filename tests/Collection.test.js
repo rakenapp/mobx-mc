@@ -127,6 +127,19 @@ describe('Collection', () => {
     });
   });
 
+  describe('hasModels getter', () => {
+    beforeEach(() => {
+      collection = new Collection(usersData);
+    });
+
+    it('returns true if the length collection.models is greater than 0', () => {
+      expect(collection.length).toEqual(4);
+      expect(collection.hasModels).toBeTruthy();
+      collection.clear();
+      expect(collection.hasModels).toBeFalsy();
+    });
+  });
+
   describe('ids method', () => {
     beforeEach(() => {
       collection = new Collection(usersData);
