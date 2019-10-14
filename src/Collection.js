@@ -521,7 +521,7 @@ class Collection {
    * before adding it to the collection
    */
   @action
-  getOrFetch(id, options) {
+  getOrFetch(id, options = {}) {
     if (this.get(id)) {
       const model = this.get(id);
 

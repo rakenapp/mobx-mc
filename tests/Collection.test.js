@@ -525,7 +525,57 @@ describe('Collection', () => {
   });
 
   describe('getOrFetch action', () => {
-    describe('Model does not already exist in collection', () => {
+    describe('Model exists in collection', () => {
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it('Returns the model instance and does not fetch', () => {
+        jest.spyOn(request, 'get').mockImplementation(() => {
+          return new Promise((resolve, reject) => {
+            resolve({});
+          });
+        });
+
+        class SubModel extends Model {
+          idAttribute() {
+            return 'uuid';
+          }
+        }
+
+        class SubCollection extends Collection {
+          url() {
+            return 'jsonapi/users';
+          }
+
+          model() {
+            return SubModel;
+          }
+        }
+
+        collection = new SubCollection([
+          {
+            uuid: '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
+          }
+        ]);
+
+        const model = collection.getOrFetch(
+          '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
+        );
+
+        expect(collection.get('3c59d5f0-d958-4cd5-a81b-2a87d835921f')).toEqual(
+          model
+        );
+
+        expect(request.get).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('Model does not exist in collection', () => {
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
       it('Creates a new model, fetches it then adds it to the collection', () => {
         jest.spyOn(request, 'get').mockImplementation(() => {
           return new Promise((resolve, reject) => {
@@ -573,48 +623,6 @@ describe('Collection', () => {
             params: {}
           }
         );
-      });
-    });
-
-    describe('Model exists in collection', () => {
-      it('Returns the model instance it finds', () => {
-        jest.spyOn(request, 'get').mockImplementation(() => {
-          return new Promise((resolve, reject) => {
-            resolve({});
-          });
-        });
-
-        class SubModel extends Model {
-          idAttribute() {
-            return 'uuid';
-          }
-        }
-
-        class SubCollection extends Collection {
-          url() {
-            return 'jsonapi/users';
-          }
-
-          model() {
-            return SubModel;
-          }
-        }
-
-        collection = new SubCollection([
-          {
-            uuid: '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
-          }
-        ]);
-
-        const model = collection.getOrFetch(
-          '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
-        );
-
-        expect(collection.get('3c59d5f0-d958-4cd5-a81b-2a87d835921f')).toEqual(
-          model
-        );
-
-        expect(request.get).not.toHaveBeenCalled();
       });
     });
   });
