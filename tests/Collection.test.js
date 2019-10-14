@@ -525,7 +525,7 @@ describe('Collection', () => {
   });
 
   describe('getOrFetch action', () => {
-    describe('Model exists in collection', () => {
+    describe('Model exists in collection with fetchExsiting option set to false', () => {
       afterEach(() => {
         jest.clearAllMocks();
       });
@@ -568,6 +568,60 @@ describe('Collection', () => {
         );
 
         expect(request.get).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('Model exists in collection with fetchExsiting option set to true', () => {
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it('Returns the model instance and also re-fetches', () => {
+        jest.spyOn(request, 'get').mockImplementation(() => {
+          return new Promise((resolve, reject) => {
+            resolve({});
+          });
+        });
+
+        class SubModel extends Model {
+          idAttribute() {
+            return 'uuid';
+          }
+        }
+
+        class SubCollection extends Collection {
+          url() {
+            return 'jsonapi/users';
+          }
+
+          model() {
+            return SubModel;
+          }
+        }
+
+        collection = new SubCollection([
+          {
+            uuid: '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
+          }
+        ]);
+
+        const model = collection.getOrFetch(
+          '3c59d5f0-d958-4cd5-a81b-2a87d835921f',
+          {
+            fetchExisting: true
+          }
+        );
+
+        expect(collection.get('3c59d5f0-d958-4cd5-a81b-2a87d835921f')).toEqual(
+          model
+        );
+
+        expect(request.get).toHaveBeenCalledWith(
+          'jsonapi/users/3c59d5f0-d958-4cd5-a81b-2a87d835921f',
+          {
+            params: {}
+          }
+        );
       });
     });
 
