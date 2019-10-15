@@ -31,7 +31,7 @@ class Collection {
     return;
   }
 
- /**
+  /**
    * Apply options to a Collection
    */
   applyOptions(options) {
@@ -521,7 +521,7 @@ class Collection {
    * before adding it to the collection
    */
   @action
-  getOrFetch(id, options) {
+  getOrFetch(id, options = {}) {
     if (this.get(id)) {
       const model = this.get(id);
 
@@ -549,10 +549,7 @@ class Collection {
 
     const model = new CollectionModel(
       { [this.modelIdAttribute]: id },
-      {
-        ...this.modelOptions,
-        parse: true
-      }
+      this.modelOptions
     );
 
     model.fetch(options).then(

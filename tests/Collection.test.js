@@ -103,7 +103,7 @@ describe('Collection', () => {
     });
 
     it('can be overridden to return a different model class', () => {
-      class SubModel extends Model { }
+      class SubModel extends Model {}
 
       class SubCollection extends Collection {
         model() {
@@ -414,7 +414,9 @@ describe('Collection', () => {
         phone: '012345678'
       });
 
-      expect(collection.get('1').email).toEqual('lostintranslation@rakenapp.com');
+      expect(collection.get('1').email).toEqual(
+        'lostintranslation@rakenapp.com'
+      );
     });
 
     it('Can receive a single model instance', () => {
@@ -522,6 +524,163 @@ describe('Collection', () => {
     });
   });
 
+  describe('getOrFetch action', () => {
+    describe('Model exists in collection with fetchExsiting option set to false', () => {
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it('Returns the model instance and does not fetch', () => {
+        jest.spyOn(request, 'get').mockImplementation(() => {
+          return new Promise((resolve, reject) => {
+            resolve({});
+          });
+        });
+
+        class SubModel extends Model {
+          idAttribute() {
+            return 'uuid';
+          }
+        }
+
+        class SubCollection extends Collection {
+          url() {
+            return 'jsonapi/users';
+          }
+
+          model() {
+            return SubModel;
+          }
+        }
+
+        collection = new SubCollection([
+          {
+            uuid: '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
+          }
+        ]);
+
+        const model = collection.getOrFetch(
+          '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
+        );
+
+        expect(collection.get('3c59d5f0-d958-4cd5-a81b-2a87d835921f')).toEqual(
+          model
+        );
+
+        expect(request.get).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('Model exists in collection with fetchExsiting option set to true', () => {
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it('Returns the model instance and also re-fetches', () => {
+        jest.spyOn(request, 'get').mockImplementation(() => {
+          return new Promise((resolve, reject) => {
+            resolve({});
+          });
+        });
+
+        class SubModel extends Model {
+          idAttribute() {
+            return 'uuid';
+          }
+        }
+
+        class SubCollection extends Collection {
+          url() {
+            return 'jsonapi/users';
+          }
+
+          model() {
+            return SubModel;
+          }
+        }
+
+        collection = new SubCollection([
+          {
+            uuid: '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
+          }
+        ]);
+
+        const model = collection.getOrFetch(
+          '3c59d5f0-d958-4cd5-a81b-2a87d835921f',
+          {
+            fetchExisting: true
+          }
+        );
+
+        expect(collection.get('3c59d5f0-d958-4cd5-a81b-2a87d835921f')).toEqual(
+          model
+        );
+
+        expect(request.get).toHaveBeenCalledWith(
+          'jsonapi/users/3c59d5f0-d958-4cd5-a81b-2a87d835921f',
+          {
+            params: {}
+          }
+        );
+      });
+    });
+
+    describe('Model does not exist in collection', () => {
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it('Creates a new model, fetches it then adds it to the collection', () => {
+        jest.spyOn(request, 'get').mockImplementation(() => {
+          return new Promise((resolve, reject) => {
+            resolve({});
+          });
+        });
+
+        class SubModel extends Model {
+          idAttribute() {
+            return 'uuid';
+          }
+        }
+
+        class SubCollection extends Collection {
+          url() {
+            return 'jsonapi/users';
+          }
+
+          model() {
+            return SubModel;
+          }
+        }
+
+        collection = new SubCollection();
+
+        const model = collection.getOrFetch(
+          '3c59d5f0-d958-4cd5-a81b-2a87d835921f',
+          {
+            success: () => {
+              expect(collection.length).toBe(1);
+              expect(collection.at(0).id).toBe(
+                '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
+              );
+            }
+          }
+        );
+
+        expect(model instanceof SubModel).toBeTruthy();
+        expect(model.id).toBe('3c59d5f0-d958-4cd5-a81b-2a87d835921f');
+        expect(model.collection).toBe(collection);
+
+        expect(request.get).toHaveBeenCalledWith(
+          'jsonapi/users/3c59d5f0-d958-4cd5-a81b-2a87d835921f',
+          {
+            params: {}
+          }
+        );
+      });
+    });
+  });
+
   describe('pushModels action', () => {
     it('Instantiates models from JSON', () => {
       collection = new UserCollection();
@@ -535,7 +694,9 @@ describe('Collection', () => {
         phone: '012345678'
       });
 
-      expect(collection.get('1').email).toEqual('lostintranslation@rakenapp.com');
+      expect(collection.get('1').email).toEqual(
+        'lostintranslation@rakenapp.com'
+      );
     });
 
     it('Accepts model instances', () => {
@@ -647,8 +808,8 @@ describe('Collection', () => {
     it('Sets the fetching request label to truthy', () => {
       collection
         .fetch()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(collection.fetching).toBeTruthy();
     });
@@ -658,8 +819,8 @@ describe('Collection', () => {
 
       collection
         .fetch()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(request.get).toHaveBeenCalledWith(collection.url(), {
         cancelToken: expect.anything(),
@@ -675,8 +836,8 @@ describe('Collection', () => {
         .fetch({
           url: '/api/v1/users/1/businesses'
         })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(request.get).toHaveBeenCalledWith('/api/v1/users/1/businesses', {
         cancelToken: expect.anything(),
@@ -694,8 +855,8 @@ describe('Collection', () => {
             included: 'projects'
           }
         })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(request.get).toHaveBeenCalledWith(collection.url(), {
         cancelToken: expect.anything(),
@@ -707,7 +868,7 @@ describe('Collection', () => {
     it('Calls the set action if the request is successful', () => {
       spyOn(Collection.prototype, 'set');
 
-      spyOn(request, 'get').and.callFake(function () {
+      spyOn(request, 'get').and.callFake(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -717,14 +878,14 @@ describe('Collection', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
       collection
         .fetch()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(collection.set).toHaveBeenCalledWith(companiesData, {
         add: true,
@@ -737,7 +898,7 @@ describe('Collection', () => {
     it('Passes the set options through to the set action', () => {
       spyOn(Collection.prototype, 'set');
 
-      spyOn(request, 'get').and.callFake(function () {
+      spyOn(request, 'get').and.callFake(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -747,14 +908,14 @@ describe('Collection', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
       collection
         .fetch({ add: true, merge: false, remove: false })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(collection.set).toHaveBeenCalledWith(companiesData, {
         add: true,
@@ -766,7 +927,7 @@ describe('Collection', () => {
     it('allows for the individual set options to be overriden', () => {
       spyOn(Collection.prototype, 'set');
 
-      spyOn(request, 'get').and.callFake(function () {
+      spyOn(request, 'get').and.callFake(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -776,14 +937,14 @@ describe('Collection', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
       collection
         .fetch({ remove: false })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(collection.set).toHaveBeenCalledWith(companiesData, {
         add: true,
@@ -802,7 +963,7 @@ describe('Collection', () => {
       });
 
       collection.fetch().then(
-        () => { },
+        () => {},
         () => {
           expect(collection.set).not.toHaveBeenCalled();
           expect(collection.fetching).toBeFalsy();
@@ -834,7 +995,7 @@ describe('Collection', () => {
     it('Creates a new model instance with the passed in data, returns instance once promise is resolved.', () => {
       collection = new Collection();
 
-      spyOn(request, 'post').and.callFake(function () {
+      spyOn(request, 'post').and.callFake(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -842,7 +1003,7 @@ describe('Collection', () => {
             });
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
@@ -863,7 +1024,7 @@ describe('Collection', () => {
     });
 
     it('Adds the new model to the collection immediately if wait options is falsy', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function () {
+      spyOn(Model.prototype, 'create').and.callFake(function() {
         return {
           then(cb) {
             setTimeout(() => {
@@ -874,7 +1035,7 @@ describe('Collection', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
@@ -892,14 +1053,14 @@ describe('Collection', () => {
           },
           { wait: false }
         )
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(collection.length).toEqual(1);
     });
 
     it('Adds the new model only after successful creation on server if wait options is truthy', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function () {
+      spyOn(Model.prototype, 'create').and.callFake(function() {
         return {
           then(cb) {
             setTimeout(() => {
@@ -910,7 +1071,7 @@ describe('Collection', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
@@ -951,14 +1112,14 @@ describe('Collection', () => {
           },
           { wait: true }
         )
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(collection.saving).toBeTruthy();
     });
 
     it('Calls the create action on the model with the collections URL', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function () {
+      spyOn(Model.prototype, 'create').and.callFake(function() {
         return {
           then() {
             return this;
@@ -983,7 +1144,7 @@ describe('Collection', () => {
     });
 
     it('Sets the creating label to falsy after the model.create method completes successfuly', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function () {
+      spyOn(Model.prototype, 'create').and.callFake(function() {
         return {
           then(cb) {
             setTimeout(() => {
@@ -994,7 +1155,7 @@ describe('Collection', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
@@ -1012,8 +1173,8 @@ describe('Collection', () => {
           },
           { wait: true }
         )
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(collection.saving).toBeTruthy();
 
@@ -1045,7 +1206,7 @@ describe('Collection', () => {
           { wait: true }
         )
         .then(
-          () => { },
+          () => {},
           () => {
             expect(collection.saving).toBeFalsy();
           }
