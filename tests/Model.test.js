@@ -9,7 +9,6 @@ let model;
 let collection;
 let rootStore;
 
-
 describe('Model', () => {
   describe('constructor with no initial state', () => {
     beforeEach(() => {
@@ -123,7 +122,7 @@ describe('Model', () => {
         date: '2017-11-13'
       });
 
-      spyOn(request, 'get').and.callFake(function () {
+      spyOn(request, 'get').and.callFake(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -133,7 +132,7 @@ describe('Model', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
@@ -184,7 +183,7 @@ describe('Model', () => {
 
   describe('restAttributes', () => {
     it('Defines a white list of fieldnames allowed in the attributes map', () => {
-      spyOn(request, 'post').and.callFake(function () {
+      spyOn(request, 'post').and.callFake(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -198,7 +197,7 @@ describe('Model', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
@@ -230,11 +229,14 @@ describe('Model', () => {
 
       model.save();
 
-      expect(request.post).toHaveBeenCalledWith('/api/me', {
-        firstName: 'John',
-        lastName: 'Doe'
-      });
-
+      expect(request.post).toHaveBeenCalledWith(
+        '/api/me',
+        {
+          firstName: 'John',
+          lastName: 'Doe'
+        },
+        undefined
+      );
 
       expect(model.attributes.toJSON()).toEqual({
         title: 'Mr',
@@ -438,14 +440,14 @@ describe('Model', () => {
     it('Sets the fetching request label to truthy', () => {
       model
         .fetch()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.fetching).toBeTruthy();
     });
 
     it('Calls a get request with the models url by default', () => {
-      spyOn(request, 'get').and.callFake(function () {
+      spyOn(request, 'get').and.callFake(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -455,14 +457,14 @@ describe('Model', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
       model
         .fetch()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(request.get).toHaveBeenCalledWith(model.url(), { params: {} });
     });
@@ -474,8 +476,8 @@ describe('Model', () => {
         .fetch({
           url: '/api/users/1'
         })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(request.get).toHaveBeenCalledWith('/api/users/1', {
         params: {}
@@ -491,8 +493,8 @@ describe('Model', () => {
             included: 'companies'
           }
         })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(request.get).toHaveBeenCalledWith(model.url(), {
         params: { included: 'companies' }
@@ -502,7 +504,7 @@ describe('Model', () => {
     it('Calls the set method if the request is successful', () => {
       spyOn(Model.prototype, 'set');
 
-      spyOn(request, 'get').and.callFake(function () {
+      spyOn(request, 'get').and.callFake(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -512,14 +514,14 @@ describe('Model', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
       model
         .fetch()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.set).toHaveBeenCalledWith(userData);
     });
@@ -534,7 +536,7 @@ describe('Model', () => {
       });
 
       model.fetch().then(
-        () => { },
+        () => {},
         () => {
           expect(model.set).not.toHaveBeenCalled();
           expect(model.fetching).toBeFalsy();
@@ -600,8 +602,8 @@ describe('Model', () => {
 
       model
         .save()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(patch.calls.mostRecent().args[0]).toEqual(model.url());
     });
@@ -613,8 +615,8 @@ describe('Model', () => {
         .save(null, {
           method: 'put'
         })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(put.calls.mostRecent().args[0]).toEqual(model.url());
     });
@@ -627,8 +629,8 @@ describe('Model', () => {
           method: 'put',
           url: '/customUrl'
         })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(put.calls.mostRecent().args[0]).toEqual('/customUrl');
     });
@@ -637,8 +639,8 @@ describe('Model', () => {
       const patch = spyOn(request, 'patch').and.callThrough();
       model
         .save()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(patch.calls.mostRecent().args[1]).toEqual({
         id: 2,
@@ -657,8 +659,8 @@ describe('Model', () => {
         .save({
           firstName: 'David'
         })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(patch.calls.mostRecent().args[1]).toEqual({
         firstName: 'David'
@@ -673,8 +675,8 @@ describe('Model', () => {
           firstName: 'David',
           age: 26
         })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(patch.calls.mostRecent().args[1]).toEqual({
         firstName: 'David'
@@ -691,8 +693,8 @@ describe('Model', () => {
             wait: false
           }
         )
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.firstName).toEqual('David');
     });
@@ -709,8 +711,8 @@ describe('Model', () => {
             wait: true
           }
         )
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.firstName).toEqual('John');
     });
@@ -725,8 +727,8 @@ describe('Model', () => {
             wait: true
           }
         )
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.saving).toBeTruthy();
     });
@@ -734,7 +736,7 @@ describe('Model', () => {
     it('Calls the set method if the request is successful', () => {
       spyOn(Model.prototype, 'set');
 
-      spyOn(request, 'patch').and.callFake(function () {
+      spyOn(request, 'patch').and.callFake(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -744,14 +746,14 @@ describe('Model', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
       model
         .save()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.set).toHaveBeenCalledWith(userData, {
         method: 'patch',
@@ -777,8 +779,8 @@ describe('Model', () => {
           },
           { wait: false }
         )
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.firstName).toEqual('John');
     });
@@ -812,8 +814,8 @@ describe('Model', () => {
       const post = spyOn(request, 'post').and.callThrough();
       model
         .create()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(post.calls.mostRecent().args[1]).toEqual(
         omit(userData, ['id', 'company'])
@@ -826,8 +828,8 @@ describe('Model', () => {
         .create({
           phone: '021191234076'
         })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(post.calls.mostRecent().args[1]).toEqual({
         type: 'User',
@@ -856,7 +858,7 @@ describe('Model', () => {
     });
 
     it('Immediately sets the data on the model if wait option is falsy', () => {
-      spyOn(request, 'post').and.callFake(function () {
+      spyOn(request, 'post').and.callFake(function() {
         return {
           then(cb) {
             setTimeout(() => {
@@ -868,7 +870,7 @@ describe('Model', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
@@ -882,14 +884,14 @@ describe('Model', () => {
           },
           { wait: false }
         )
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.firstName).toEqual('Johnny');
     });
 
     it('Waits for successful response from server before updating model if wait option is truthy', () => {
-      spyOn(request, 'post').and.callFake(function () {
+      spyOn(request, 'post').and.callFake(function() {
         return {
           then(cb) {
             setTimeout(() => {
@@ -906,7 +908,7 @@ describe('Model', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
@@ -920,8 +922,8 @@ describe('Model', () => {
           },
           { wait: true }
         )
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.firstName).toEqual('John');
 
@@ -942,8 +944,8 @@ describe('Model', () => {
           },
           { wait: true }
         )
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.saving).toBeTruthy();
     });
@@ -952,8 +954,8 @@ describe('Model', () => {
       const post = spyOn(request, 'post').and.callThrough();
       model
         .create()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(post.calls.mostRecent().args[0]).toEqual(model.url());
     });
@@ -964,8 +966,8 @@ describe('Model', () => {
         .create(null, {
           url: '/api/v1/people/1'
         })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(post.calls.mostRecent().args[0]).toEqual('/api/v1/people/1');
     });
@@ -973,7 +975,7 @@ describe('Model', () => {
     it('calls the models set action with the response from successful save to server', () => {
       spyOn(Model.prototype, 'set');
 
-      spyOn(request, 'post').and.callFake(function () {
+      spyOn(request, 'post').and.callFake(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -983,14 +985,14 @@ describe('Model', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
       model
         .create()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.set).toHaveBeenCalledWith(userData);
     });
@@ -1011,8 +1013,8 @@ describe('Model', () => {
           },
           { wait: false }
         )
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(model.firstName).toEqual('John');
     });
@@ -1045,8 +1047,8 @@ describe('Model', () => {
       collection
         .at(0)
         .destroy({ wait: false })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(collection.length).toEqual(1);
     });
@@ -1062,7 +1064,7 @@ describe('Model', () => {
         .at(0)
         .destroy({ wait: false })
         .then(
-          () => { },
+          () => {},
           () => {
             expect(collection.length).toEqual(2);
             expect(collection.at(0).deleting).toBeFalsy();
@@ -1076,23 +1078,26 @@ describe('Model', () => {
       collection
         .at(0)
         .destroy()
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
-      expect(deleteRequest).toHaveBeenCalledWith(`${collection.url()}/1`);
+      expect(deleteRequest).toHaveBeenCalledWith(
+        `${collection.url()}/1`,
+        undefined
+      );
     });
 
     it('Sets the deleting requestLabel to truthy if wait option if truthy', () => {
       collection
         .at(0)
         .destroy({ wait: true })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
       expect(collection.at(0).deleting).toBeTruthy();
     });
 
     it('Waits until a successful response from server before removing model from collection if wait options is truthy', () => {
-      spyOn(request, 'delete').and.callFake(function () {
+      spyOn(request, 'delete').and.callFake(function() {
         return {
           then(cb) {
             setTimeout(() => {
@@ -1103,15 +1108,15 @@ describe('Model', () => {
 
             return this;
           },
-          catch: () => { }
+          catch: () => {}
         };
       });
 
       collection
         .at(0)
         .destroy({ wait: true })
-        .then(() => { })
-        .catch(() => { });
+        .then(() => {})
+        .catch(() => {});
 
       expect(collection.length).toEqual(2);
       expect(collection.at(0).deleting).toBeTruthy();

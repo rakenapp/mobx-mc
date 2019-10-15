@@ -252,6 +252,7 @@ class Model {
       request
         .get(url, {
           params: options.params ? options.params : {},
+          ...options.axios,
           ...globalOptions
         })
         .then(
@@ -316,7 +317,8 @@ class Model {
     return new Promise((resolve, reject) => {
       request[options.method](
         options.url ? options.url : this.url(),
-        data
+        data,
+        options.axios
       ).then(
         response => {
           runInAction('save-success', () => {
@@ -373,25 +375,27 @@ class Model {
     }
 
     return new Promise((resolve, reject) => {
-      request.post(options.url ? options.url : this.url(), data).then(
-        response => {
-          runInAction('create-success', () => {
-            this.set(response.data);
-            this.setRequestLabel('saving', false);
-            resolve(this);
-          });
-        },
-        error => {
-          runInAction('create-error', () => {
-            if (!options.wait) {
-              this.set(originalAttributes);
-            }
+      request
+        .post(options.url ? options.url : this.url(), data, options.axios)
+        .then(
+          response => {
+            runInAction('create-success', () => {
+              this.set(response.data);
+              this.setRequestLabel('saving', false);
+              resolve(this);
+            });
+          },
+          error => {
+            runInAction('create-error', () => {
+              if (!options.wait) {
+                this.set(originalAttributes);
+              }
 
-            this.setRequestLabel('saving', false);
-            reject(error);
-          });
-        }
-      );
+              this.setRequestLabel('saving', false);
+              reject(error);
+            });
+          }
+        );
     });
   }
 
@@ -423,31 +427,33 @@ class Model {
     }
 
     return new Promise((resolve, reject) => {
-      request.delete(options.url ? options.url : this.url()).then(
-        response => {
-          runInAction('destroy-success', () => {
-            if (options.wait && this.collection) {
-              this.collection.remove(this);
-            }
-            this.setRequestLabel('deleting', false);
-            resolve(this);
-          });
-        },
-        error => {
-          runInAction('destroy-error', () => {
-            // Put it back if delete request fails
-            if (!options.wait && this.collection) {
-              if (error && error.response && error.response.status === 404)
-                return;
+      request
+        .delete(options.url ? options.url : this.url(), options.axios)
+        .then(
+          response => {
+            runInAction('destroy-success', () => {
+              if (options.wait && this.collection) {
+                this.collection.remove(this);
+              }
+              this.setRequestLabel('deleting', false);
+              resolve(this);
+            });
+          },
+          error => {
+            runInAction('destroy-error', () => {
+              // Put it back if delete request fails
+              if (!options.wait && this.collection) {
+                if (error && error.response && error.response.status === 404)
+                  return;
 
-              this.collection.add(this);
-            }
+                this.collection.add(this);
+              }
 
-            this.setRequestLabel('deleting', false);
-            reject(error);
-          });
-        }
-      );
+              this.setRequestLabel('deleting', false);
+              reject(error);
+            });
+          }
+        );
     });
   }
 }
