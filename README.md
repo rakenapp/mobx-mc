@@ -1,126 +1,735 @@
-# Mobx-mc
-Mobx model-collection library
+![](https://img.shields.io/npm/v/mobx-mc) ![CircleCI](https://img.shields.io/circleci/build/github/rakenapp/mobx-mc)
 
-mobx-mc 1.0.0  supports  Mobx v.4
-A demo-application and documentation will be available soon
+## Table of Contents
 
-### Installation
+- [Installation](#installation)
+- [Introduction](#introduction)
+- [Model](#model)
+  - [constructor(data, options)](#constructordata-options)
+  - [applyOptions(options)](#applyoptionsoptions)
+  - [get restAttributes()](#get-restattributes)
+  - [attributes](#attributes)
+  - [set(data, options)](#setdata-options)
+    - [Options](#options)
+  - [parse(data)](#parsedata)
+  - [get restAttributeDefaults()](#get-restattributedefaults)
+  - [idAttribute()](#idattribute)
+  - [cid](#cid)
+  - [uniqueId](#uniqueid)
+  - [isNew](#isnew)
+  - [collection](#collection)
+  - [urlRoot](#urlroot)
+  - [url()](#url)
+  - [CRUD Operations](#crud-operations)
+  - [fetch(options)](#fetchoptions)
+    - [Options](#options-1)
+- [save(data, options)](#savedata-options)
+  - [Options](#options-2)
+- [destroy(options)](#destroyoptions)
+  - [Options](#options-3)
+- [Collection](#collection-1)
+  - [constructor(attributes, options)](#constructorattributes-options)
+  - [applyOptions(options)](#applyoptionsoptions-1)
+  - [model(type)](#modeltype)
+  - [models](#models)
+  - [length](#length)
+  - [set(data, options)](#setdata-options-1)
+    - [Options](#options-4)
+  - [parse(data)](#parsedata-1)
+  - [get(id)](#getid)
+  - [at(index)](#atindex)
+  - [add(models)](#addmodels)
+  - [remove(models)](#removemodels)
+    - [Options](#options-5)
+  - [reset(array)](#resetarray)
+  - [url()](#url-1)
+  - [CRUD Operations](#crud-operations-1)
+  - [fetch(options)](#fetchoptions-1)
+    - [Options](#options-6)
+  - [create(data, options)](#createdata-options)
+    - [Options](#options-7)
+  - [getOrFetch(id, options)](#getorfetchid-options)
+- [Where is it used?](#where-is-it-used)
+- [License](#license)
+
+## Installation
+
+`npm install mobx-mc`
+
+`yarn add mobx-mc`
+
+## Introduction
+
+Mobx MC is a library inspired by both [Backbone](https://backbonejs.org/) models and collections and the approach of using domain stores and domain objects as described in the [Mobx Best Practices Documentation](https://mobx.js.org/best/store.html). If you haven't yet read this page, I highly recommend it if you are considering building a large scale application with Mobx.
+
+The basic concept is that of a `Model` and a `Collection` of models. State is managed automatically, and CRUD is built-in. A classic example would be a to-do list, where each task would be a model and the list of tasks would be a collection.
+
+## Model
+
+To create a **Model** class of your own, you extend **Model** and provide instance properties and options for your class. Typically, this is when you'll define the `restAttributes`, and any computed properties or actions to be attached to instances of your class.
+
+```javascript
+import { computed } from 'mobx';
+import { Model } from 'mobx-mc';
+
+class User extends Model {
+  get restAttributes() {
+    return ['firstName', 'lastName'];
+  }
+
+  @computed get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+```
+
+### constructor(data, options)
+
+When creating an instance of a model, you can pass in the initial values of the **attributes**. You will need to have defined these attributes in `restAttributes`.
+
+```javascript
+const me = new User({
+  firstName: 'Tony',
+  lastName: 'Stark'
+});
+```
+
+As a second argument you can pass in a configuration object with options to pass through to the `set` method and the `applyOptions` method used to set up references to other class instances.
+
+```javascript
+import rootStore from 'stores/index';
+
+const me = new User(
+  {
+    firstName: 'Tony',
+    lastName: 'Stark'
+  },
+  {
+    parse: true,
+    rootStore: rootStore
+  }
+);
+```
+
+### applyOptions(options)
+
+Override this method to customise how you would like to handle any additional options passed in when a model is initialized.
+
+```javascript
+applyOptions(options) {
+  if (options.rootStore) {
+    this.rootStore = options.rootStore;
+  }
+}
+```
+
+### get restAttributes()
+
+Defines a white-list of fields that you expect to receive from your backend API. Any fields not defined here will be stripped out when reading or writing from the server (however this can be overridden by setting the `stripNonRest: false` option on any CRUD method).
+
+```javascript
+import { computed } from 'mobx';
+import { Model } from 'mobx-mc';
+
+class User extends Model {
+  get restAttributes() {
+    return ['firstName', 'lastName'];
+  }
+}
+
+const user = new User();
+
+// Only firstName and lastName sent in request
+user.save({
+  title: 'Mr',
+  firstName: 'Tony',
+  lastName: 'Stark'
+});
+
+// title, firstName and lastName sent in request
+user.save(
+  {
+    title: 'Mr',
+    firstName: 'Tony',
+    lastName: 'Stark'
+  },
+  {
+    stripNonRest: false
+  }
+);
+```
+
+### attributes
+
+The **attributes** property is a reference to a [Mobx Observable Map](https://mobx.js.org/refguide/map.html#observable-maps) that holds the values for the fields defined in `restAttributes` . The model's `set` method will keep this map updated when fetching and saving data to the server.
+
+You can use any of the methods available for Maps, or access properties directly using dot syntax because the model provides dynamic getter/setters to the map's keys.
+
+```javascript
+import { computed } from 'mobx';
+import { Model } from 'mobx-mc';
+
+class User extends Model {
+  get restAttributes() {
+    return ['firstName', 'lastName'];
+  }
+
+  @computed get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+
+const user = new User();
+
+// Use the underlying map's methods
+user.attributes.set('firstName', 'Peter');
+
+// Alternatively modify properties directly
+user.lastName = 'Parker';
+
+console.log(user.firstName); // 'Peter'
+console.log(user.attributes.get('lastName')); // 'Parker'
+
+// The map is observable so anything that referenes the keys will be stay up to date
+console.log(user.fullName); // 'Peter Parker'
+```
+
+### set(data, options)
+
+Sets a value, or multiple values, on the `attributes` map. The Model's constructor and CRUD related methods (`save,` `fetch` etc) call this method when new data is received.
+
+#### Options
+
+- `parse` (_Boolean_) - If `{parse: true}` is passed as an **option**, the `data` will first be run through the model's `parse()` method before being `set` on the map. The default for this option is `true`.
+
+- `stripNonRest` (_Boolean_) - If `{stripNonRest: false}` is passed as an **option**, keys that are not specified in `restAttributes` will still be set on the `attributes` map. The default for this option is `false`.
+- `replace` (_Boolean_) - If `{replace: true}` is passed as an **option**, the entire `attributes` map will be replaced with the passed in `data` (Equivalent of `attributes.clear()` && `attributes.set(data)`). The default for this option is `false` which will perform a merge on the attributes (Equivalent of `attributes.merge(data`)). See the [Mobx documentation on Maps](https://mobx.js.org/refguide/map.html#observable-maps) for more information.
+
+### parse(data)
+
+Called internally by the `set` method before applying `data` to the `attributes` map.
+
+The default implementation is a no-op, simply passing through the `data`. Override this if your data needs to be modified, remapped, renamed, etc.
+
+```javascript
+class User extends Model {
+  get restAttributes() {
+    return ['firstName', 'lastName', 'company'];
+  }
+
+  parse(data) {
+    // Use the parse method to remap the company data into a company model
+    this.company = new Company(data.company);
+
+    // Remove the company from the data.
+    delete data.company;
+
+    // First name and last name will be set on the attributes
+    return data;
+  }
+}
+```
+
+### get restAttributeDefaults()
+
+Use this to define default values for your model. If the value for a key in `attributes` is set to `undefined` it will fall back to the value specified here.
+
+```javascript
+class User extends Model {
+  get restAttributes() {
+    return ['title', 'firstName', 'lastName'];
+  }
+
+  get resetAttributeDefaults() {
+    return {
+      title: 'Dr'
+    };
+  }
+}
+
+const user = new User();
+
+console.log(user.title); // 'Dr';
+```
+
+### idAttribute()
+
+Returns the attribute that should be used as the unique id of the model. This is used to determine the `id` when constructing a model's `url` for saving to the server.
+
+Defaults to `'id'`.
+
+```javascript
+class User extends Model {
+  urlRoot = '/users';
+
+  idAttribute() {
+    return 'uuid';
+  }
+
+  get restAttributes() {
+    return ['firstName', 'lastName'];
+  }
+}
+
+const me = new User({ uuid: 'b5eb81ef-26ff-4df7-bfa3-0d1b7feccbc1' });
+
+console.log(me.url()); // '/users/b5eb81ef-26ff-4df7-bfa3-0d1b7feccbc1'
+```
+
+### cid
+
+A unique identifier automatically assigned to all models when they are first created. Client IDs are handy when the model has not been saved to the server so does not yet have its true `id`, but still needs a unique id (e.g for usage as a `key` when mapping over and rendering React Components).
+
+```javascript
+const user = new User();
+console.log(user.cid); // '6b910175-1f56-48de-9fae-0e152629d535'
+```
+
+### uniqueId
+
+Returns the model's `id` if it's available, otherwise falling back to the `cid`. This proerpty is provided for convienence so you don't have to write conditionals throughout your codebase.
+
+```javascript
+render() {
+  return this.props.users.map(user => <User key={user.uniqueId} />)
+}
+```
+
+### isNew
+
+Has this model been saved to the server yet? If the model does not yet have an `id`, it is considered to be new.
+
+### collection
+
+A reference to the collection the model belongs to, if in a collection. This is used for building the default `url` for a model.
+
+### urlRoot
+
+The base url to use for fetching this model. This is useful if the model is _not_ in a collection and you still want to set a fixed "root" but have a dynamic model.url().
+
+```javascript
+class User extends Model {
+  urlRoot = '/users';
+}
+
+const user = new User({
+  id: 1
+});
+
+console.log(user.url()); // '/users/1'
+```
+
+### url()
+
+The relative url that the model should use to edit the resource on the server. By default, `url` is constructed by finding the model's `urlRoot` or the model's collection `url`, then appending the `idAttribute`. However, if the model does not follow normal REST endpoint conventions, you may overwrite it. In such a case, `url` may be absolute.
+
+```javascript
+class User extends Model {
+  urlRoot = '/users';
+}
+
+const user = new User({
+  id: 1
+});
+
+console.log(user.url()); // '/users/1'
+
+class Me extends User {
+  url() {
+    return '/me''
+  }
+}
+
+const me = new Me({
+  id: 2
+})
+
+console.log(me.url()); // '/me'
+```
+
+### CRUD Operations
+
+Mobx MC relies on the [Axios](https://github.com/axios/axios) library for making http requests. All CRUD related methods return a promise that will resolve to either the model instance or an error object.
+
+You can pass in Axios specific configuration by passing an additional `axios` object inside `options` for any method.
+
+```javascript
+model
+  .fetch({
+    axiosOptions: {
+      timeout: 1000
+    }
+  })
+  .then(model => {})
+  .catch(error => {});
+```
+
+### fetch(options)
+
+Merges the model's `attributes` with data fetched from the server. Useful if the model has never been populated with data, or if you'd like to ensure that you have the latest server state.
+
+Calling `model.fetch` will toggle a `fetching` observable property so you can respond accordingly to the status of the http `GET` request (e.g. To show a loading animation).
+
+##### Options
+
+- `params` (Object) - Used to dynamically add query parameters to the url when fetching.
+- `url` (String) - On some occasions it may be desirable to override the `url` for a single request. The request will default to `model.url()` when this is not explicitly configured.
+
+```javascript
+class User extends Model {
+  urlRoot = '/users';
+}
+
+const user = new User({
+  id: 1
+});
+
+user.fetch(); // GET request to '/users/1'
+
+user.fetch({
+  url: '/me'
+  params: {
+    includeRole: true
+  }
+});  // GET request to '/me?includeRole=true'
+```
+
+### save(data, options)
+
+The `data` argument should contain the attributes you'd like to change - attributes that aren't provided will not be sent in the resulting request. You can pass `null` to send a copy of all the attributes currently in memory.
+
+If the model `isNew`, the save will be a "create" (`POST`). If the model already exists on the server, the save will be an "update" (`PATCH`).
+
+Calling `model.save` will toggle a `saving` observable property so you can respond accordingly to the status of the http request.
+
+#### Options
+
+- `wait` (Boolean) - Pass `{wait: true}` if you'd like to wait for the server to respond before updating the model's attributes. The default for this option is `false` which performs an optimistic update.
+- `method` (String) - Passed down to Axios to override the request method. e.g. Your API may require a `PUT` request so you could pass `method: PUT` in the options when calling `save`.
+- `url` (String) - On some occasions it may be desirable to override the `url` for a single request. The request will default to `model.url()` when this is not explicitly configured.
+
+In addition to the above, you can also pass in any options supported by the `set` method and these will be passed through to that method when handling the response from the server.
+
+```javascript
+const user = new User({
+  firstName: 'Clark',
+  lastName: 'Kent'
+});
+
+user.save();
+
+// Sends a POST request to /users with all of the model's attributes
+{
+  "firstName": "Clark",
+  "lastName": "Kent"
+}
+
+// Subsequent saves update the model
+user.save({
+  firstName: "Super"
+});
+
+// Sends a PATCH request to /users/1
+{
+  "firstName": "Super"
+}
 
 ```
-npm install mobx-mc
-yarn add mobx-mc
-```
-## `Collections`
 
-* Base Class 
-```
-import { Collection } from 'mobx-mc'
-```
+### destroy(options)
 
-Heavily inpsired by Backbone Collections. These normally map directly to a single resource on the API. They are used to fetch and store models from the API. Collections closely resembles the concept of a Domain Store described here in the mobx best practices section here:
+Sends an `DELETE` request to the model's URL, and if the request is successful it also removes the model from the collection it belongs to.
 
-https://mobx.js.org/best/store.html#domain-stores.
+Calling `model.delete` will toggle a `deleting` observable property so you can respond accordingly to the status of the http request.
 
-### Properties
+#### Options
 
-* ### collection.url
+- Pass `{wait: true}` if you'd like to wait for the server to respond before removing the model from it's collection.
 
-Defines a URL (normally an API endpoint) to fetch models from. Models within the collection will use url to construct URLs of their own.
-
-* ### collection.model
-
-Defines a reference to a Class which will be used to instanitate any models added to it. When defined, you can pass raw attributes objects (and arrays) to add, create, and reset, and the attributes will be converted into a model of the proper type.
-
-* ### collection.models
-
-An observable array containing all of the individual models that belongin the collection.
-
-* ### collection.length
-
-Convienience property to get the number of models currently in the collection. Equivalent to `collections.models.length`.
-
-### Methods / Actions
-
-**Note:** All of the methods/actions below return a `Promise` so you can associate handlers with an asynchronous action's eventual success value or failure reason.
-
-* ### collection.set(models, options)
-
-The set method performs a "smart" update of the collection with the passed list of models. If a model in the list isn't yet in the collection it will be added; if the model is already in the collection its attributes will be merged; and if the collection contains any models that aren't present in the list, they'll be removed.
-
-If you'd like to customize the behavior, you can disable it with options: {add: false}, {remove: false}, or {merge: false}.
-
-* ### collection.fetch(options)
-
-Fetch the models for this collection from the server, setting them on the collection when they arrive. The behavior of fetch can be customized by using the available **set** options.
-
-* ### collection.at(index)
-
-Get a model from a collection, specified by index. Useful if your collection is sorted, and if your collection isn't sorted, at will still retrieve models in insertion order. When passed a negative index, it will retrieve the model from the back of the collection.
-
-* ### collection.get(id)
-
-Get a model from a collection, specified by an id.
-
-* ### collection.add(models, options)
-
-Add a model (or an array of models) to the collection.
-
-* ### collection.remove(models, options)
-
-Remove a model (or an array of models) from the collection, and return them.
-
-* ### collection.create(json, options)
-
-Convenience to create a new instance of a model within a collection. Equivalent to instantiating a model with a hash of attributes, saving the model to the server, and adding the model to the set after being successfully created.
-
-## `Models`
-
-* Base Class 
-```
-import { Model } from 'mobx-mc'
+```javascript
+user.destroy(); // Sends a DELETE request to the model's url.
 ```
 
-Heavily inpsired by Backbone Models. Models closely resembles the concept of a Domain Object described here: https://mobx.js.org/best/store.html#domain-objects
+---
 
-### Properties
+## Collection
 
-* ### model.restAttribtues
+To create a **Collection** class of your own, you extend **Collection** and provide instance properties and options for your class. Typically, this is when you'll define the `url` for the related resource and a `model` class that you would like your collection to contain.
 
-Defines a white-label list of attributes which be read from and written to to the server/API. Any attributes not defined in this list will be ignored when performing actions such as `fetch` and `save`. This ensures the payload is always kept to a minimum and the server does not receive non-supported fieldnames.
+```js
+import { computed } from 'mobx';
+import { Collection } from 'mobx-mc';
 
-* ### model.restAttributeDefaults
+class Users extends Collection {
+  url() {
+    return '/users';
+  }
 
-Defines a map of default values for attributes that may not always be available from the server.
+  model() {
+    return User;
+  }
+}
+```
 
-* ### model.url
+### constructor(attributes, options)
 
-If a model does not belong to a collection you can define a url directly on the model. An example would be model for the authenticated user with an url of `api/me`.
+When creating an instance of a collection you can pass in a data object (or JSON) to populate the models.
 
-* ### model.isNew
+```javascript
+const users = new Users([
+  {
+    id: '1',
+    firstName: 'Clark',
+    lastName: 'Kent'
+  },
+  {
+    id: '2',
+    firstName: 'Tony',
+    lastName: 'Stark'
+  }
+]);
 
-Has this model been saved to the server yet? If the model does not yet have an id, it is considered to be new.
+console.log(users.length); // 2
+```
 
-### Methods / Actions
+As a second argument you can pass in a configuration object with options to pass through to the `set` method, and the `applyOptions` method used to set up references to other class instances.
 
-**Note:** All of the methods/actions below return a `Promise` so you can associate handlers with an asynchronous action's eventual success value or failure reason.
+```javascript
+import rootStore from 'stores/index';
 
-* ### model.fetch()
+const users = new Users(
+  [
+    {
+      id: '1',
+      firstName: 'Clark',
+      lastName: 'Kent'
+    },
+    {
+      id: '2',
+      firstName: 'Tony',
+      lastName: 'Stark'
+    }
+  ],
+  {
+    rootStore: rootStore
+  }
+);
+```
 
-Fetches the model's latest state from the server. Useful if a model does not belong to a collection or you simply waht to get the latest state of a model independantly.
+### applyOptions(options)
 
-* ### model.save(attributes, options)
+Override this method to customize how you would like to handle any additional options passed in when a collection is initialized.
 
-If the model `isNew`, the save will be a "create" (HTTP POST), if the model already exists on the server, the save will be an "update" (HTTP PATCH).
+```javascript
+applyOptions(options) {
+  if (options.rootStore) {
+    this.rootStore = options.rootStore;
+  }
+}
+```
 
-Pass `{wait: true}` if you'd like to wait for the server to respond before updating the models attributes.
+### model(type)
 
-* ### model.destroy(options)
+Override this method to specify the model class that the collection contains. If defined, you can pass raw objects (and arrays) to `add` and `reset`, and the attributes will be converted into a model of the proper type.
 
-Sends an HTTP DELETE request to the models URL, then if the request is successful it also removes the model from the collection it belongs to.
+### models
 
-Pass `{wait: true}` if you'd like to wait for the server to respond before removing the model from the collection.
+The **models** property is a reference to a [Mobx Observable Array](https://mobx.js.org/refguide/array.html) that holds an instance of each model in the collection. The collection's `set` method will keep this array updated when fetching and saving data to the server.
 
-* ### model.parse(attributes)
+You can use any of the methods available for ES6 Arrays and Mobx Arrays.
 
-Parse is called whenever a model's data is returned by the server, in fetch, and save. The function is passed the raw response object, and should return the attributes hash to be set on the model. The default implementation is a no-op, simply passing through the JSON response. Override this if you need parse attributes into further child models and/or collections or simply modify the data in some way before it gets set in the models attributes map.
+### length
 
+Shortcut property equivalent to `models.length`
+
+### set(data, options)
+
+The **set** method performs a "smart" update of the the **models** array with the passed list of models:
+
+- If a model in the list isn't in the collection, it will be added.
+- If a model in the list is in the collection already, its attributes will be merged.
+- If the collection contains any models that aren't in the list, they'll be removed.
+
+If you'd like to customize the behavior, you can disable it with options: `{add: false}`, `{remove: false}`, or `{merge: false}`.
+
+#### Options
+
+- `add` (Boolean)
+- `remove` (Boolean)
+- `merge`(Boolean)
+
+### parse(data)
+
+Called internally by the `set` method before applying `data` to the `models` array.
+
+The default implementation is a no-op, simply passing through the `data`. Override this if your data needs to be modified, remapped, renamed, etc.
+
+```javascript
+class Users extends Collection {
+  model() {
+    return User;
+  }
+
+  parse(data) {
+    return data.collection;
+  }
+}
+
+const users = new Users({
+  collection: [
+    {
+      id: '1',
+      firstName: 'Clark',
+      lastName: 'Kent'
+    },
+    {
+      id: '2',
+      firstName: 'Tony',
+      lastName: 'Stark'
+    }
+  ]
+});
+
+console.log(users.length); // 2
+```
+
+### get(id)
+
+Get a model from a collection, specified by an `id` or `cid`.
+
+```javascript
+const users = new Users([
+  {
+    id: '1',
+    firstName: 'Clark',
+    lastName: 'Kent'
+  },
+  {
+    id: '2',
+    firstName: 'Tony',
+    lastName: 'Stark'
+  }
+]);
+
+console.log(users.get('2').firstName); // Tony
+```
+
+### at(index)
+
+Get a model from a collection, specified by `index`. Equivalent of `collection.models[index]`. i.e. `collection.at(0)` returns the first model in the collection.
+
+### add(models)
+
+Add a model (or an array of models) to the collection. If a Model class is defined, you may also pass raw model data and options, and have them be vivified as instances of the model using the provided options. Returns the added models (or preexisting models, if already contained).
+
+### remove(models)
+
+Remove a model (or an array of models) from the collection. The models object/array can be references to actual models, or raw data objects.
+
+#### Options
+
+- Pass `{at: index}` to splice the model into the collection at the specified index.
+- If you're adding models to the collection that it already contains, they'll be ignored, unless you pass `{merge: true}`, in which case their attributes will be merged into the corresponding models.
+
+### reset(array)
+
+Call `reset(array)` to replace a collection with a new list of models (or attribute hashes). Calling `collection.reset()` without passing any models as arguments will empty the entire collection.
+
+### url()
+
+Set the **url** method on a collection to reference its location on the server. Models within the collection will use **url** to construct URLs of their own.
+
+```javascript
+import { computed } from 'mobx';
+import { Collection } from 'mobx-mc';
+
+class Users extends Collection {
+  url() {
+    return '/users';
+  }
+
+  model() {
+    return User;
+  }
+}
+
+const users = new Users();
+
+const user = users.add({
+  {
+    "firstName": "Clark",
+    "lastName": "Kent"
+  }
+});
+
+user.save(); // POST request sent to /users
+
+users.fetch() // GET request sent to /users
+```
+
+### CRUD Operations
+
+Mobx MC relies on the [Axios](https://github.com/axios/axios) library for making http requests. All CRUD related methods return a promise that will resolve to either the collection, newly created model instance or an error object.
+
+You can pass in Axios specific configuration by passing an additional `axios` object inside `options` for any method.
+
+### fetch(options)
+
+Fetch the a set of models for the collection from the server, setting them on the collection's `models` array when they arrive.
+
+You can pass in any options supported by the `set` method and these will be passed through to that method when handling the response from the server.
+
+Calling `model.fetch` will toggle a `fetching` observable property so you can respond accordingly to the status of the http `GET` request (e.g. To show a loading animation).
+
+#### Options
+
+- `params` (Object) - Used to dynamically add query parameters to the url when fetching.
+- `url` (String) - On some occasions it may be desirable to override the `url` for a single request. The request will default to `collection.url()` when this is not explicitly configured.
+
+```javascript
+users.fetch({
+  params: {
+    page: 2
+  }
+});
+
+// GET request to '/users?page=2'.
+```
+
+### create(data, options)
+
+Convenience to create a new instance of a model within a collection. Equivalent to instantiating a model with a hash of attributes, saving the model to the server, and adding the model to the set after being successfully created. Returns a promise the resolves to the newly created model.
+
+#### Options
+
+- Pass `{wait: true}` if you'd like to wait for the server before adding the new model to the collection.
+- `url` (String) - On some occasions it may be desirable to override the `url` for a single request. The request will default to `collection.url()` when this is not explicitly configured.
+
+You can pass in any options supported by the `set` method and these will be passed through to that method when handling the response from the server.
+
+```javascript
+const newUser = users.create({
+  firstName: 'Peter',
+  lastName: 'Parker'
+});
+
+// POST request to '/users'.  New model added to the collection
+```
+
+### getOrFetch(id, options)
+
+Convenience method. Gets a model from the server or from the collection if a model with that `id` already exists.
+
+## Where is it used?
+
+Developed and tested in production at [Raken](https://www.rakenapp.com/)
+
+## License
+
+MIT
+
+## Credits
+
+Many of the ideas here should be credited to [Jeremy Ashkenas](https://github.com/jashkenas) and the rest of the Backbone.js authors.
+
+Thanks to [Michel Westrate](https://github.com/mweststrate) for Mobx.
