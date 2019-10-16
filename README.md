@@ -727,3 +727,9 @@ Developed and tested in production at [Raken](https://www.rakenapp.com/)
 ## License
 
 MIT
+
+## Credits
+
+Many of the ideas here should be credited to [Jeremy Ashkenas](https://github.com/jashkenas) and the rest of the Backbone.js authors.
+
+Thanks to [Michel Westrate](https://github.com/mweststrate) for Mobx.
