@@ -6,7 +6,7 @@
 - [Introduction](#introduction)
 - [Model](#model)
   - [constructor(data, options)](#constructor-data--options-)
-    - [applyOptions(options)](#applyoptions-options-)
+  - [applyOptions(options)](#applyoptions-options-)
   - [get restAttributes()](#get-restattributes--)
   - [attributes](#attributes)
   - [set(data, options)](#set-data--options-)
@@ -111,7 +111,7 @@ const me = new User(
 );
 ```
 
-#### applyOptions(options)
+### applyOptions(options)
 
 Override this method to customise how you would like to handle any additional options passed in when a model is initialized.
 
