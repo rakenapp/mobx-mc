@@ -698,7 +698,7 @@ users.fetch({
 
 ### create(data, options)
 
-Convenience to create a new instance of a model within a collection. Equivalent to instantiating a model with a hash of attributes, saving the model to the server, and adding the model to the set after being successfully created. Returns a promise the resolves to the newly created model.
+Convenience to create a new instance of a model within a collection. Equivalent to instantiating a model with new data, saving the model to the server, and adding the model to the collection after being successfully created. Returns a promise that resolves with the newly created model.
 
 #### Options
 
