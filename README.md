@@ -202,7 +202,7 @@ Sets a value, or multiple values, on the `attributes` map. The Model's construct
 
 - `parse` (_Boolean_) - If `{parse: true}` is passed as an **option**, the `data` will first be run through the model's `parse()` method before being `set` on the map. The default for this option is `true`.
 
-- `stripNonRest` (_Boolean_) - If `{stripNonRest: false}` is passed as an **option**, keys that are not specified in `restAttributes` will still be set on the `attributes` map. The default for this option is `false`.
+- `stripNonRest` (_Boolean_) - If `{stripNonRest: false}` is passed as an **option**, keys that are not specified in `restAttributes` will still be set on the `attributes` map. The default for this option is `true`.
 - `replace` (_Boolean_) - If `{replace: true}` is passed as an **option**, the entire `attributes` map will be replaced with the passed in `data` (Equivalent of `attributes.clear()` && `attributes.set(data)`). The default for this option is `false` which will perform a merge on the attributes (Equivalent of `attributes.merge(data`)). See the [Mobx documentation on Maps](https://mobx.js.org/refguide/map.html#observable-maps) for more information.
 
 ### parse(data)
