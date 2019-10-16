@@ -125,7 +125,7 @@ applyOptions(options) {
 
 ### get restAttributes()
 
-Defines a white-list of fields that you expect to receive from your backend API. Any fields not defined here will be stripped out when reading or writing from the server (however this can be overridden by setting the `stripNonRest: false` option on any CRUD method).
+Defines a white-list of fields that you expect to receive from your backend API. Any fields not defined here will be stripped out when reading from or writing to the server (however this can be overridden by setting the `stripNonRest: false` option on any CRUD method).
 
 ```javascript
 import { computed } from 'mobx';
