@@ -19,8 +19,8 @@
   - [isNew](#isnew)
   - [collection](#collection)
   - [urlRoot](#urlroot)
+  - [url()](#url--)
   - [CRUD Operations](#crud-operations)
-    - [url()](#url--)
   - [fetch(options)](#fetch-options-)
     - [Options](#options-1)
   - [save(data, options)](#save-data--options-)
@@ -42,8 +42,8 @@
   - [remove(models)](#remove-models-)
     - [Options](#options-5)
   - [reset(array)](#reset-array-)
-  - [CRUD Operations](#crud-operations-1)
   - [url()](#url---1)
+  - [CRUD Operations](#crud-operations-1)
   - [fetch(options)](#fetch-options--1)
     - [Options](#options-6)
   - [create(data, options)](#create-data--options-)
@@ -125,7 +125,7 @@ applyOptions(options) {
 
 ### get restAttributes()
 
-Defines a white-list of fields that you expect to receive from your backend API. Any fields not defined here will be stripped out when reading from or writing to the server (however this can be overridden by setting the `stripNonRest: false` option on any CRUD method).
+Defines a white-list of fields that you expect to receive from your backend API. Any fields not defined here will be stripped out when reading or writing from the server (however this can be overridden by setting the `stripNonRest: false` option on any CRUD method).
 
 ```javascript
 import { computed } from 'mobx';
@@ -319,24 +319,7 @@ const user = new User({
 console.log(user.url()); // '/users/1'
 ```
 
-### CRUD Operations
-
-Mobx MC relies on the [Axios](https://github.com/axios/axios) library for making http requests. All CRUD related methods return a promise that will resolve to either the model instance or an error object.
-
-You can pass in Axios specific configuration by passing an additional `axios` object inside `options` for any method.
-
-```javascript
-model
-  .fetch({
-    axiosOptions: {
-      timeout: 1000
-    }
-  })
-  .then(model => {})
-  .catch(error => {});
-```
-
-#### url()
+### url()
 
 The relative url that the model should use to edit the resource on the server. By default, `url` is constructed by finding the model's `urlRoot` or the model's collection `url`, then appending the `idAttribute`. However, if the model does not follow normal REST endpoint conventions, you may overwrite it. In such a case, `url` may be absolute.
 
@@ -362,6 +345,23 @@ const me = new Me({
 })
 
 console.log(me.url()); // '/me'
+```
+
+### CRUD Operations
+
+Mobx MC relies on the [Axios](https://github.com/axios/axios) library for making http requests. All CRUD related methods return a promise that will resolve to either the model instance or an error object.
+
+You can pass in Axios specific configuration by passing an additional `axios` object inside `options` for any method.
+
+```javascript
+model
+  .fetch({
+    axiosOptions: {
+      timeout: 1000
+    }
+  })
+  .then(model => {})
+  .catch(error => {});
 ```
 
 ### fetch(options)
@@ -635,12 +635,6 @@ Remove a model (or an array of models) from the collection. The models object/ar
 
 Call `reset(array)` to replace a collection with a new list of models (or attribute hashes). Calling `collection.reset()` without passing any models as arguments will empty the entire collection.
 
-### CRUD Operations
-
-Mobx MC relies on the [Axios](https://github.com/axios/axios) library for making http requests. All CRUD related methods return a promise that will resolve to either the collection, newly created model instance or an error object.
-
-You can pass in Axios specific configuration by passing an additional `axios` object inside `options` for any method.
-
 ### url()
 
 Set the **url** method on a collection to reference its location on the server. Models within the collection will use **url** to construct URLs of their own.
@@ -672,6 +666,12 @@ user.save(); // POST request sent to /users
 
 users.fetch() // GET request sent to /users
 ```
+
+### CRUD Operations
+
+Mobx MC relies on the [Axios](https://github.com/axios/axios) library for making http requests. All CRUD related methods return a promise that will resolve to either the collection, newly created model instance or an error object.
+
+You can pass in Axios specific configuration by passing an additional `axios` object inside `options` for any method.
 
 ### fetch(options)
 
