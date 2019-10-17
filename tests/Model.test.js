@@ -763,6 +763,39 @@ describe('Model', () => {
       });
     });
 
+    it('Resolve a successful Promise with an updated Model ', () => {
+      spyOn(request, 'patch').and.callFake(function() {
+        return {
+          then(cb) {
+            cb.call(null, {
+              status: 200,
+              data: {
+                firstName: 'Rick'
+              }
+            });
+
+            return this;
+          },
+          catch: () => {}
+        };
+      });
+
+      // expect.assertions(1);
+      // return model
+      expect(model.firstName).toEqual('John');
+
+      model
+        .save(
+          {
+            firstName: 'Rick'
+          },
+          {
+            wait: true
+          }
+        )
+        .then(updatedModel => expect(updatedModel.firstName).toEqual('Rick'));
+    });
+
     it('Resets the attributes to the original state if the request fails and wait option is falsy', () => {
       spyOn(Model.prototype, 'set');
 
