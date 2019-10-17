@@ -780,10 +780,7 @@ describe('Model', () => {
         };
       });
 
-      // expect.assertions(1);
-      // return model
       expect(model.firstName).toEqual('John');
-
       model
         .save(
           {
