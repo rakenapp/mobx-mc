@@ -667,7 +667,7 @@ describe('Model', () => {
       });
     });
 
-    it('Strips out any attributes not flagged in te restAttributes gettera', () => {
+    it('Strips out any attributes not flagged in the restAttributes getter', () => {
       const patch = spyOn(request, 'patch').and.callThrough();
 
       model

@@ -178,7 +178,7 @@ class Collection {
     );
 
     if (options.remove) {
-      const ids = models.map(d => d.id);
+      const ids = models.map(model => model.id);
 
       this.spliceModels(difference(this.ids(), ids));
     }
@@ -245,7 +245,6 @@ class Collection {
   /**
    * Update collection by an array of models
    */
-
   @action
   batchUpdate(arrayAttributes = [], options) {
     options = Object.assign({}, options);
