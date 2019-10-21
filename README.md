@@ -12,6 +12,7 @@
   - [set(data, options)](#setdata-options)
     - [Options](#options)
   - [parse(data)](#parsedata)
+  - [toJSON()](#tojson)
   - [get restAttributeDefaults()](#get-restattributedefaults)
   - [idAttribute()](#idattribute)
   - [cid](#cid)
@@ -229,6 +230,10 @@ class User extends Model {
   }
 }
 ```
+
+### toJSON()
+
+Returns a deep plain object representation of the `attributes` map.
 
 ### get restAttributeDefaults()
 

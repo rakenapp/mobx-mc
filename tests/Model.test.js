@@ -1158,4 +1158,42 @@ describe('Model', () => {
       expect(collection.at(0).deleting).toBeFalsy();
     });
   });
+
+  describe('toJSON method', () => {
+    it("Returns a plain object representation of the model's attributes", () => {
+      class SubModel extends Model {
+        get restAttributes() {
+          return ['name', 'projects'];
+        }
+      }
+
+      const newModel = new SubModel({
+        name: 'New company',
+        projects: [
+          {
+            id: 1,
+            name: 'Project 1'
+          },
+          {
+            id: 2,
+            name: 'Project 2'
+          }
+        ]
+      });
+
+      expect(newModel.toJSON()).toEqual({
+        name: 'New company',
+        projects: [
+          {
+            id: 1,
+            name: 'Project 1'
+          },
+          {
+            id: 2,
+            name: 'Project 2'
+          }
+        ]
+      });
+    });
+  });
 });
