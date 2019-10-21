@@ -12,6 +12,8 @@
   - [set(data, options)](#setdata-options)
     - [Options](#options)
   - [parse(data)](#parsedata)
+  - [clear()](#clear)
+  - [toJSON()](#tojson)
   - [get restAttributeDefaults()](#get-restattributedefaults)
   - [idAttribute()](#idattribute)
   - [cid](#cid)
@@ -214,7 +216,7 @@ The default implementation is a no-op, simply passing through the `data`. Overri
 ```javascript
 class User extends Model {
   get restAttributes() {
-    return ['firstName', 'lastName', 'company'];
+    return ['firstName', 'lastName'];
   }
 
   parse(data) {
@@ -224,11 +226,19 @@ class User extends Model {
     // Remove the company from the data.
     delete data.company;
 
-    // First name and last name will be set on the attributes
+    // First name and last name will be set on the attributes.
     return data;
   }
 }
 ```
+
+### clear()
+
+Clear all the attributes from `attributes` map. Equivalent of calling `model.attributes.clear()`
+
+### toJSON()
+
+Returns a deep plain object representation of the `attributes` map.
 
 ### get restAttributeDefaults()
 

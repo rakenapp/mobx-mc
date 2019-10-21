@@ -4,7 +4,7 @@ import pickBy from 'lodash.pickby';
 import pick from 'lodash.pick';
 import omit from 'lodash.omit';
 import forIn from 'lodash.forin';
-import { observable, action, runInAction } from 'mobx';
+import { observable, action, runInAction, toJS } from 'mobx';
 import request from 'axios';
 
 // Throw an error when a URL is needed, and none is supplied.
@@ -234,9 +234,15 @@ class Model {
   /**
    * Picks properties and returns them as an object.
    */
-  @action
   pick(properties) {
-    return pick(this.attributes, properties);
+    return pick(this.toJSON(), properties);
+  }
+
+  /**
+   * Return a plain object representation of the attributes map
+   */
+  toJSON() {
+    return toJS(this.attributes);
   }
 
   /**
@@ -293,7 +299,7 @@ class Model {
     );
 
     // Save reference to the current atributes
-    const originalAttributes = this.attributes.toJSON();
+    const originalAttributes = this.toJSON();
 
     // Strip out attributes not defined in the restAttributes map
     if (options.stripNonRest) {
@@ -358,7 +364,7 @@ class Model {
       options
     );
 
-    const originalAttributes = this.attributes.toJSON();
+    const originalAttributes = this.toJSON();
 
     if (data) {
       if (!options.notAttributes) {
