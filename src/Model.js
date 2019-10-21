@@ -299,7 +299,7 @@ class Model {
     );
 
     // Save reference to the current atributes
-    const originalAttributes = this.attributes.toJSON();
+    const originalAttributes = this.toJSON();
 
     // Strip out attributes not defined in the restAttributes map
     if (options.stripNonRest) {
@@ -364,7 +364,7 @@ class Model {
       options
     );
 
-    const originalAttributes = this.attributes.toJSON();
+    const originalAttributes = this.toJSON();
 
     if (data) {
       if (!options.notAttributes) {
