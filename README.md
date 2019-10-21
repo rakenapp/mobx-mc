@@ -226,7 +226,7 @@ class User extends Model {
     // Remove the company from the data.
     delete data.company;
 
-    // First name and last name will be set on the attributes. Company will not as it's not defined in restAttributes
+    // First name and last name will be set on the attributes.
     return data;
   }
 }
