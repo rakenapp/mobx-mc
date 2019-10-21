@@ -234,7 +234,6 @@ class Model {
   /**
    * Picks properties and returns them as an object.
    */
-  @action
   pick(properties) {
     return pick(this.toJSON(), properties);
   }
