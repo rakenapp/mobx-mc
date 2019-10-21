@@ -12,6 +12,7 @@
   - [set(data, options)](#setdata-options)
     - [Options](#options)
   - [parse(data)](#parsedata)
+  - [clear()](#clear)
   - [toJSON()](#tojson)
   - [get restAttributeDefaults()](#get-restattributedefaults)
   - [idAttribute()](#idattribute)
@@ -230,6 +231,10 @@ class User extends Model {
   }
 }
 ```
+
+### clear()
+
+Clear all the attributes from `attributes` map. Equivalent of calling `model.attributes.clear()`
 
 ### toJSON()
 
