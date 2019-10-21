@@ -216,7 +216,7 @@ The default implementation is a no-op, simply passing through the `data`. Overri
 ```javascript
 class User extends Model {
   get restAttributes() {
-    return ['firstName', 'lastName', 'company'];
+    return ['firstName', 'lastName'];
   }
 
   parse(data) {
@@ -226,7 +226,7 @@ class User extends Model {
     // Remove the company from the data.
     delete data.company;
 
-    // First name and last name will be set on the attributes
+    // First name and last name will be set on the attributes. Company will not as it's not defined in restAttributes
     return data;
   }
 }
