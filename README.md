@@ -40,7 +40,7 @@
   - [parse(data)](#parsedata-1)
   - [get(id)](#getid)
   - [at(index)](#atindex)
-  - [add(models)](#addmodels)
+  - [add(models, options)](#addmodels)
     - [Options](#options-5)
   - [remove(models)](#removemodels)
     - [Options](#options-6)
