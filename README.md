@@ -41,15 +41,16 @@
   - [get(id)](#getid)
   - [at(index)](#atindex)
   - [add(models)](#addmodels)
-  - [remove(models)](#removemodels)
     - [Options](#options-5)
+  - [remove(models)](#removemodels)
+    - [Options](#options-6)
   - [reset(array)](#resetarray)
   - [url()](#url-1)
   - [CRUD Operations](#crud-operations-1)
   - [fetch(options)](#fetchoptions-1)
-    - [Options](#options-6)
-  - [create(data, options)](#createdata-options)
     - [Options](#options-7)
+  - [create(data, options)](#createdata-options)
+    - [Options](#options-8)
   - [getOrFetch(id, options)](#getorfetchid-options)
 - [Where is it used?](#where-is-it-used)
 - [License](#license)
@@ -628,9 +629,15 @@ console.log(users.get('2').firstName); // Tony
 
 Get a model from a collection, specified by `index`. Equivalent of `collection.models[index]`. i.e. `collection.at(0)` returns the first model in the collection.
 
-### add(models)
+### add(models, options)
 
 Add a model (or an array of models) to the collection. If a Model class is defined, you may also pass raw model data and options, and have them be vivified as instances of the model using the provided options. Returns the added models (or preexisting models, if already contained).
+
+#### Options
+
+- `at` Pass `{at: index}` to splice the model into the collection at the specified `index`
+
+You can also pass in any options supported by the `set` method and these will be passed through to that method when adding the new models to the collection.
 
 ### remove(models)
 
