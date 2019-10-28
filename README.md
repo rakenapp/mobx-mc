@@ -40,8 +40,9 @@
   - [parse(data)](#parsedata-1)
   - [get(id)](#getid)
   - [at(index)](#atindex)
-  - [add(models, options)](#addmodels)
+  - [add(models, options)](#addmodels-options)
     - [Options](#options-5)
+  - [getOradd(data)](#getoradddata)
   - [remove(models)](#removemodels)
     - [Options](#options-6)
   - [reset(array)](#resetarray)
@@ -631,7 +632,11 @@ Get a model from a collection, specified by `index`. Equivalent of `collection.m
 
 ### add(models, options)
 
-Add a model (or an array of models) to the collection. If a Model class is defined, you may also pass raw model data and options, and have them be vivified as instances of the model using the provided options. Returns the added models (or preexisting models, if already contained).
+Add a model (or an array of models) to the collection. If a Model class is defined, you may also pass raw model data and options, and have them be vivified as instances of the model using the provided options. Returns the updated `models` array.
+
+### getOrAdd(data)
+
+Attempts to find a model with the same `idAttribute` passed in the `data` object and return it. If no pre-existing model is found, it will add the new model, then return it.
 
 #### Options
 
