@@ -73,8 +73,8 @@ class Collection {
   /**
    * Gets idAttribute used by Model
    */
-  get modelIdAttribute() {
-    return this.model().prototype.idAttribute();
+  getModelIdAttribute(type) {
+    return this.model(type).prototype.idAttribute();
   }
 
   /**
@@ -184,7 +184,7 @@ class Collection {
     }
 
     models.forEach(data => {
-      const model = this.get(data[this.modelIdAttribute]);
+      const model = this.get(data[this.getModelIdAttribute(data.type)]);
 
       if (model && options.merge) model.set(data, options);
 
@@ -220,8 +220,8 @@ class Collection {
    */
   @action
   getOrAdd(attributes) {
-    if (this.get(attributes[this.modelIdAttribute]))
-      return this.get(attributes[this.modelIdAttribute]);
+    if (this.get(attributes[this.getModelIdAttribute(attributes.type)]))
+      return this.get(attributes[this.getModelIdAttribute(attributes.type)]);
 
     return this.pushModels(attributes)[0];
   }
@@ -231,7 +231,7 @@ class Collection {
    */
   @action
   updateOrAdd(attributes) {
-    let model = this.get(attributes[this.modelIdAttribute]);
+    let model = this.get(attributes[this.getModelIdAttribute(attributes.type)]);
 
     if (model) {
       model.set(attributes);
@@ -252,7 +252,9 @@ class Collection {
     this.setRequestLabel('saving', true);
 
     arrayAttributes.forEach(attributes => {
-      const existingModel = this.get(attributes[this.modelIdAttribute]);
+      const existingModel = this.get(
+        attributes[this.getModelIdAttribute(attributes.type)]
+      );
       if (existingModel) {
         originalAttributes.push(existingModel.attributes.toJS());
         existingModel.set(attributes);
@@ -547,7 +549,7 @@ class Collection {
     const CollectionModel = this.model();
 
     const model = new CollectionModel(
-      { [this.modelIdAttribute]: id },
+      { [this.getModelIdAttribute()]: id },
       this.modelOptions
     );
 
