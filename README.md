@@ -44,14 +44,13 @@
     - [Options](#options-5)
   - [getOradd(data)](#getoradddata)
   - [remove(models)](#removemodels)
-    - [Options](#options-6)
   - [reset(array)](#resetarray)
   - [url()](#url-1)
   - [CRUD Operations](#crud-operations-1)
   - [fetch(options)](#fetchoptions-1)
-    - [Options](#options-7)
+    - [Options](#options-6)
   - [create(data, options)](#createdata-options)
-    - [Options](#options-8)
+    - [Options](#options-7)
   - [getOrFetch(id, options)](#getorfetchid-options)
 - [Where is it used?](#where-is-it-used)
 - [License](#license)
@@ -207,7 +206,7 @@ Sets a value, or multiple values, on the `attributes` map. The Model's construct
 - `parse` (_Boolean_) - If `{parse: true}` is passed as an **option**, the `data` will first be run through the model's `parse()` method before being `set` on the map. The default for this option is `true`.
 
 - `stripNonRest` (_Boolean_) - If `{stripNonRest: false}` is passed as an **option**, keys that are not specified in `restAttributes` will still be set on the `attributes` map. The default for this option is `true`.
-- `replace` (_Boolean_) - If `{replace: true}` is passed as an **option**, the entire `attributes` map will be replaced with the passed in `data` (Equivalent of `attributes.clear()` && `attributes.set(data)`). The default for this option is `false` which will perform a merge on the attributes (Equivalent of `attributes.merge(data`)). See the [Mobx documentation on Maps](https://mobx.js.org/refguide/map.html#observable-maps) for more information.
+- `reset` (_Boolean_) - If `{reset: true}` is passed as an **option**, the entire `attributes` map will be reset with the passed in `data` (Equivalent of `attributes.clear()` && `attributes.merge(data)`). The default for this option is `false` which will perform a merge on the attributes (Equivalent of `attributes.merge(data`)). See the [Mobx documentation on Maps](https://mobx.js.org/refguide/map.html#observable-maps) for more information.
 
 ### parse(data)
 
@@ -378,7 +377,7 @@ model
 
 ### fetch(options)
 
-Merges the model's `attributes` with data fetched from the server. Useful if the model has never been populated with data, or if you'd like to ensure that you have the latest server state.
+Resets the model's `attributes` with data fetched from the server. Useful if the model has never been populated with data, or if you'd like to ensure that you have the latest server state.
 
 Calling `model.fetch` will toggle a `fetching` observable property so you can respond accordingly to the status of the http `GET` request (e.g. To show a loading animation).
 
@@ -386,6 +385,8 @@ Calling `model.fetch` will toggle a `fetching` observable property so you can re
 
 - `params` (Object) - Used to dynamically add query parameters to the url when fetching.
 - `url` (String) - On some occasions it may be desirable to override the `url` for a single request. The request will default to `model.url()` when this is not explicitly configured.
+
+In addition to the above, you can also pass in any options supported by the `set` method and these will be passed through to that method when handling the response from the server. Please note that the `reset` option will be set to `true` by default when calling `model.fetch`.
 
 ```javascript
 class User extends Model {
@@ -559,15 +560,16 @@ Shortcut property equivalent to `models.length`
 The **set** method performs a "smart" update of the the **models** array with the passed list of models:
 
 - If a model in the list isn't in the collection, it will be added.
-- If a model in the list is in the collection already, its attributes will be merged.
 - If the collection contains any models that aren't in the list, they'll be removed.
+- If a model in the list is in the collection already, its attributes will be updated. The default is a full reset of the model's attributes. Pass `merge:true` to override this.
 
-If you'd like to customize the behavior, you can disable it with options: `{add: false}`, `{remove: false}`, or `{merge: false}`.
+If you'd like to customize the behavior, you can configure it with options:
 
 #### Options
 
 - `add` (Boolean)
 - `remove` (Boolean)
+- `update`(Boolean),
 - `merge`(Boolean)
 
 ### parse(data)
@@ -634,24 +636,19 @@ Get a model from a collection, specified by `index`. Equivalent of `collection.m
 
 Add a model (or an array of models) to the collection. If a Model class is defined, you may also pass raw model data and options, and have them be vivified as instances of the model using the provided options. Returns the updated `models` array.
 
-### getOrAdd(data)
-
-Attempts to find a model with the same `idAttribute` passed in the `data` object and return it. If no pre-existing model is found, it will add the new model, then return it.
-
 #### Options
 
 - `at` Pass `{at: index}` to splice the model into the collection at the specified `index`
 
 You can also pass in any options supported by the `set` method and these will be passed through to that method when adding the new models to the collection.
 
+### getOrAdd(data)
+
+Attempts to find a model with the same `idAttribute` passed in the `data` object and return it. If no pre-existing model is found, it will add the new model, then return it.
+
 ### remove(models)
 
 Remove a model (or an array of models) from the collection. The models object/array can be references to actual models, or raw data objects.
-
-#### Options
-
-- Pass `{at: index}` to splice the model into the collection at the specified index.
-- If you're adding models to the collection that it already contains, they'll be ignored, unless you pass `{merge: true}`, in which case their attributes will be merged into the corresponding models.
 
 ### reset(array)
 
