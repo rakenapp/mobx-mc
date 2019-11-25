@@ -338,9 +338,9 @@ class Model {
         response => {
           runInAction('save-success', () => {
             if (options.reset) {
-              this.set(Object.assign({}, data, response.data), options);
-            } else {
               this.set(response.data, options);
+            } else {
+              this.set(Object.assign({}, data, response.data), options);
             }
 
             this.setRequestLabel('saving', false);
