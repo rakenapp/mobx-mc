@@ -144,7 +144,7 @@ class Model {
         parse: true,
         stripUndefined: true,
         stripNonRest: true,
-        replace: false
+        replace: true
       },
       options
     );
