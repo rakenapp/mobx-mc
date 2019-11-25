@@ -561,7 +561,7 @@ The **set** method performs a "smart" update of the the **models** array with th
 
 - If a model in the list isn't in the collection, it will be added.
 - If the collection contains any models that aren't in the list, they'll be removed.
-- If a model in the list is in the collection already, its attributes will be updated. The default is a full reset of the model's attributes. Pass `merge:true` to override this.
+- If a model in the list is in the collection already, its attributes will be updated.
 
 If you'd like to customize the behavior, you can configure it with options:
 
@@ -569,7 +569,10 @@ If you'd like to customize the behavior, you can configure it with options:
 
 - `add` (Boolean)
 - `remove` (Boolean)
-- `update`(Boolean),
+- `update`(Boolean)
+
+When using the `update` option, the default behaviour is a full reset of each model's attributes. Pass `merge:true` to override this and keep existing attributes in-tact.
+
 - `merge`(Boolean)
 
 ### parse(data)
