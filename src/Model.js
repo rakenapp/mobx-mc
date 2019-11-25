@@ -144,7 +144,7 @@ class Model {
         parse: true,
         stripUndefined: true,
         stripNonRest: true,
-        replace: true
+        replace: false
       },
       options
     );
@@ -170,7 +170,8 @@ class Model {
     }
 
     if (options.replace) {
-      this.attributes.replace(data);
+      this.attributes.clear();
+      this.attributes.merge(data);
     } else {
       this.attributes.merge(data);
     }

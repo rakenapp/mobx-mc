@@ -172,7 +172,8 @@ class Collection {
         add: true,
         merge: true,
         remove: true,
-        unshift: false
+        unshift: false,
+        replace: true
       },
       options
     );
