@@ -170,8 +170,7 @@ class Model {
     }
 
     if (options.replace) {
-      this.attributes.clear();
-      this.attributes.merge(data);
+      this.attributes.replace(data);
     } else {
       this.attributes.merge(data);
     }
