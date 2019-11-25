@@ -149,6 +149,10 @@ class Model {
       options
     );
 
+    if (options.reset) {
+      this.attributes.clear();
+    }
+
     // Set the id immediately if possible
     if (data && data[this.idAttribute()]) {
       this.id = data[this.idAttribute()];
@@ -169,17 +173,7 @@ class Model {
       data = this.stripNonRestAttributes(data);
     }
 
-    if (options.reset) {
-      Object.keys(this.attributes).forEach(key => {
-        if (data[key]) {
-          this.attributes.set(key, data[key]);
-        } else {
-          this.attributes.delete(key);
-        }
-      });
-    } else {
-      this.attributes.merge(data);
-    }
+    this.attributes.merge(data);
 
     return this;
   }

@@ -307,7 +307,7 @@ describe('Collection', () => {
     });
   });
 
-  describe('setModels action with merge option set to falsy', () => {
+  describe('setModels action with update option set to falsy', () => {
     beforeEach(() => {
       collection = new UserCollection(usersData);
 
@@ -332,7 +332,7 @@ describe('Collection', () => {
             phone: '012345678'
           }
         ],
-        { add: true, merge: false, remove: true }
+        { add: true, update: false, remove: true }
       );
     });
 
