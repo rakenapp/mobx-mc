@@ -206,7 +206,8 @@ Sets a value, or multiple values, on the `attributes` map. The Model's construct
 - `parse` (_Boolean_) - If `{parse: true}` is passed as an **option**, the `data` will first be run through the model's `parse()` method before being `set` on the map. The default for this option is `true`.
 
 - `stripNonRest` (_Boolean_) - If `{stripNonRest: false}` is passed as an **option**, keys that are not specified in `restAttributes` will still be set on the `attributes` map. The default for this option is `true`.
-- `reset` (_Boolean_) - If `{reset: true}` is passed as an **option**, the entire `attributes` map will be reset with the passed in `data` (Equivalent of `attributes.clear()` && `attributes.merge(data)`). The default for this option is `false` which will perform a merge on the attributes (Equivalent of `attributes.merge(data`)). See the [Mobx documentation on Maps](https://mobx.js.org/refguide/map.html#observable-maps) for more information.
+
+- `reset` (_Boolean_) - If `{reset: true}` is passed as an **option**, the entire `attributes` map will be reset with the passed in `data` (Equivalent of `attributes.clear()` && `attributes.merge(data)`). When call this method directly, the default option is `false` which will perform a merge on the attributes (Equivalent of `attributes.merge(data`)). See the [Mobx documentation on Maps](https://mobx.js.org/refguide/map.html#observable-maps) for more information.
 
 ### parse(data)
 
@@ -386,7 +387,7 @@ Calling `model.fetch` will toggle a `fetching` observable property so you can re
 - `params` (Object) - Used to dynamically add query parameters to the url when fetching.
 - `url` (String) - On some occasions it may be desirable to override the `url` for a single request. The request will default to `model.url()` when this is not explicitly configured.
 
-In addition to the above, you can also pass in any options supported by the `set` method and these will be passed through to that method when handling the response from the server. Please note that the `reset` option will be set to `true` by default when calling `model.fetch`.
+In addition to the above, you can also pass in any options supported by the `set` method and these will be passed through to that method when handling the response from the server. Please note that the `reset` option will be `true` by default when calling `model.fetch`.
 
 ```javascript
 class User extends Model {
@@ -571,7 +572,7 @@ If you'd like to customize the behavior, you can configure it with options:
 - `remove` (Boolean)
 - `update`(Boolean)
 
-When using the `update` option, the default behaviour is a full reset of each model's attributes. Pass `merge:true` to override this and keep existing attributes in-tact.
+When using the `update` option, the default behaviour is a full reset of each model's attributes, deleting any keys not specifed in `data`. Pass `merge:true` if you would like to merge in the `data` and keep all existing keys in-tact.
 
 - `merge`(Boolean)
 
