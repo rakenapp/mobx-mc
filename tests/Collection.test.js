@@ -195,8 +195,9 @@ describe('Collection', () => {
 
       expect(collection.setModels).toHaveBeenCalledWith(usersData, {
         add: true,
-        merge: true,
-        remove: true
+        update: true,
+        remove: true,
+        merge: false
       });
     });
 
@@ -297,7 +298,7 @@ describe('Collection', () => {
             phone: '012345678'
           }
         ],
-        { add: false, merge: true, remove: true }
+        { add: false, update: true, remove: true }
       );
     });
 
@@ -306,7 +307,7 @@ describe('Collection', () => {
     });
   });
 
-  describe('setModels action with merge option set to falsy', () => {
+  describe('setModels action with update option set to falsy', () => {
     beforeEach(() => {
       collection = new UserCollection(usersData);
 
@@ -331,7 +332,7 @@ describe('Collection', () => {
             phone: '012345678'
           }
         ],
-        { add: true, merge: false, remove: true }
+        { add: true, update: false, remove: true }
       );
     });
 
@@ -365,7 +366,7 @@ describe('Collection', () => {
             phone: '012345678'
           }
         ],
-        { add: true, merge: true, remove: false }
+        { add: true, update: true, remove: false }
       );
     });
 
@@ -397,6 +398,7 @@ describe('Collection', () => {
       expect(collection.setModels).toHaveBeenCalledWith([modelJSON], {
         add: true,
         remove: false,
+        update: false,
         merge: false
       });
 
@@ -889,8 +891,9 @@ describe('Collection', () => {
 
       expect(collection.set).toHaveBeenCalledWith(companiesData, {
         add: true,
-        merge: true,
-        remove: true
+        update: true,
+        remove: true,
+        merge: false
       });
       expect(collection.fetching).toBeFalsy();
     });
@@ -913,14 +916,15 @@ describe('Collection', () => {
       });
 
       collection
-        .fetch({ add: true, merge: false, remove: false })
+        .fetch({ add: true, update: false, merge: false, remove: false })
         .then(() => {})
         .catch(() => {});
 
       expect(collection.set).toHaveBeenCalledWith(companiesData, {
         add: true,
-        merge: false,
-        remove: false
+        update: false,
+        remove: false,
+        merge: false
       });
     });
 
@@ -948,8 +952,9 @@ describe('Collection', () => {
 
       expect(collection.set).toHaveBeenCalledWith(companiesData, {
         add: true,
-        merge: true,
-        remove: false
+        update: true,
+        remove: false,
+        merge: false
       });
     });
 

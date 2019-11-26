@@ -591,7 +591,7 @@ describe('Model', () => {
         {
           wait: true,
           stripNonRest: true,
-          replace: false,
+          reset: false,
           method: 'patch'
         }
       );
@@ -757,7 +757,7 @@ describe('Model', () => {
 
       expect(model.set).toHaveBeenCalledWith(userData, {
         method: 'patch',
-        replace: false,
+        reset: false,
         stripNonRest: true,
         wait: false
       });

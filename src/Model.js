@@ -144,10 +144,14 @@ class Model {
         parse: true,
         stripUndefined: true,
         stripNonRest: true,
-        replace: false
+        reset: false
       },
       options
     );
+
+    if (options.reset) {
+      this.attributes.clear();
+    }
 
     // Set the id immediately if possible
     if (data && data[this.idAttribute()]) {
@@ -169,11 +173,7 @@ class Model {
       data = this.stripNonRestAttributes(data);
     }
 
-    if (options.replace) {
-      this.attributes.replace(data);
-    } else {
-      this.attributes.merge(data);
-    }
+    this.attributes.merge(data);
 
     return this;
   }
@@ -250,6 +250,14 @@ class Model {
    */
   @action
   fetch(options = {}, globalOptions) {
+    // Merge in the any options with the default
+    options = Object.assign(
+      {
+        reset: true
+      },
+      options
+    );
+
     this.setRequestLabel('fetching', true);
 
     const url = options.url ? options.url : this.url();
@@ -292,7 +300,7 @@ class Model {
       {
         wait: false,
         stripNonRest: true,
-        replace: false,
+        reset: false,
         method: 'patch'
       },
       options
@@ -305,6 +313,7 @@ class Model {
     if (options.stripNonRest) {
       data = this.stripNonRestAttributes(data);
     }
+
     if (data === null) {
       data = Object.assign({}, originalAttributes);
     }
@@ -328,7 +337,12 @@ class Model {
       ).then(
         response => {
           runInAction('save-success', () => {
-            this.set(Object.assign({}, data, response.data), options);
+            if (options.reset) {
+              this.set(response.data, options);
+            } else {
+              this.set(Object.assign({}, data, response.data), options);
+            }
+
             this.setRequestLabel('saving', false);
             resolve(this);
           });

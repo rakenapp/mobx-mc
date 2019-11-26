@@ -132,8 +132,9 @@ class Collection {
     options = Object.assign(
       {
         add: true,
-        merge: true,
-        remove: true
+        update: true,
+        remove: true,
+        merge: false
       },
       options
     );
@@ -170,7 +171,8 @@ class Collection {
     options = Object.assign(
       {
         add: true,
-        merge: true,
+        update: true,
+        merge: false,
         remove: true,
         unshift: false
       },
@@ -186,7 +188,10 @@ class Collection {
     models.forEach(data => {
       const model = this.get(data[this.getModelIdAttribute(data.type)]);
 
-      if (model && options.merge) model.set(data, options);
+      if (model && options.update)
+        model.set(data, {
+          reset: Boolean(!options.merge)
+        });
 
       if (!model && options.add) this.pushModels(data, options);
     });
@@ -205,6 +210,7 @@ class Collection {
       Object.assign(
         {
           add: true,
+          update: false,
           merge: false,
           remove: false
         },
@@ -383,7 +389,8 @@ class Collection {
         url: this.url(),
         params: {},
         add: true,
-        merge: true,
+        update: true,
+        merge: false,
         remove: true
       },
       options
@@ -412,6 +419,7 @@ class Collection {
             runInAction('fetch-success', () => {
               this.set(response.data, {
                 add: options.add,
+                update: options.update,
                 merge: options.merge,
                 remove: options.remove,
                 unshift: options.unshift
