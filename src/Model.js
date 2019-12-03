@@ -272,7 +272,9 @@ class Model {
         .then(
           response => {
             runInAction('fetch-success', () => {
-              this.set(this.setRestAttributeDefaults(response.data));
+              this.set(this.setRestAttributeDefaults(response.data),{
+                reset:options.reset
+              });
               this.setRequestLabel('fetching', false);
               resolve(this);
             });
