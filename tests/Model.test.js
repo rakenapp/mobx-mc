@@ -523,7 +523,9 @@ describe('Model', () => {
         .then(() => {})
         .catch(() => {});
 
-      expect(model.set).toHaveBeenCalledWith(userData);
+      expect(model.set).toHaveBeenCalledWith(userData, {
+        reset: true
+      });
     });
 
     it('Sets the fetching request label to falsy if the request fails', () => {
