@@ -1,4 +1,4 @@
-import request from 'axios';
+import request from 'redaxios';
 import Collection from '../src/Collection';
 import Model from '../src/Model';
 
