@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
+    "analyze": "source-map-explorer 'lib/*.js'",
     "prepare": "npm run build",
     "test": "jest"
   },
@@ -36,6 +37,7 @@
     "lodash.result": "^4.5.2",
     "mobx": "4.13.1",
     "querystringify": "^2.1.1",
+    "redaxios": "^0.2.0",
     "uuid-v4": "^0.1.0"
   },
   "devDependencies": {

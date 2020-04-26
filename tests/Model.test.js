@@ -1,5 +1,5 @@
 import omit from 'lodash.omit';
-import request from 'axios';
+import request from 'redaxios';
 import { observable } from 'mobx';
 import Model from '../src/Model';
 import Collection from '../src/Collection';

@@ -1,7 +1,7 @@
 import isEmpty from 'lodash.isempty';
 import difference from 'lodash.difference';
 import { action, observable, computed, runInAction } from 'mobx';
-import request, { CancelToken } from 'axios';
+import request, { CancelToken } from 'redaxios';
 import qs from 'querystringify';
 import Model from './Model';
 
