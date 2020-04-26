@@ -1,11 +1,10 @@
 {
   "name": "mobx-mc",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Mobx Store Model-Collection Library",
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
-    "analyze": "source-map-explorer 'lib/*.js'",
     "prepare": "npm run build",
     "test": "jest"
   },
@@ -27,7 +26,6 @@
   },
   "homepage": "https://github.com/rakenapp/mobx-mx#readme",
   "dependencies": {
-    "axios": "^0.18.1",
     "lodash.difference": "^4.5.0",
     "lodash.forin": "^4.4.0",
     "lodash.isempty": "^4.4.0",
