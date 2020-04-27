@@ -252,7 +252,7 @@ class User extends Model {
     return ['title', 'firstName', 'lastName'];
   }
 
-  get restAttributeDefaults() {
+  get resetAttributeDefaults() {
     return {
       title: 'Dr'
     };
