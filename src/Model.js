@@ -253,7 +253,7 @@ class Model {
     // Merge in the any options with the default
     options = Object.assign(
       {
-        reset: true
+        reset: false
       },
       options
     );
