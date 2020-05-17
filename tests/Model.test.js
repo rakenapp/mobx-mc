@@ -524,7 +524,7 @@ describe('Model', () => {
         .catch(() => {});
 
       expect(model.set).toHaveBeenCalledWith(userData, {
-        reset: true
+        reset: false
       });
     });
 

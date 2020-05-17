@@ -368,7 +368,7 @@ You can pass in Axios specific configuration by passing an additional `axios` ob
 ```javascript
 model
   .fetch({
-    axiosOptions: {
+    axios: {
       timeout: 1000
     }
   })
