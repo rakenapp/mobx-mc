@@ -431,7 +431,9 @@ class Collection {
           error => {
             runInAction('fetch-error', () => {
               this.setRequestLabel('fetching', false);
-              reject(error);
+              if (!request.isCancel(error)) {
+                reject(error);
+              }
             });
           }
         );
