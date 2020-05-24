@@ -485,11 +485,10 @@ class Model {
   /**
    * Cancel the current request
    */
-  @action
-  cancelRequest = () => {
+  cancelRequest() {
     this.requestCanceller &&
       this.requestCanceller('Operation canceled by the user.');
-  };
+  }
 }
 
 export default Model;
