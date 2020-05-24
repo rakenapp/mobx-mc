@@ -139,6 +139,7 @@ describe('Model', () => {
       model.fetch();
 
       expect(request.get).toHaveBeenCalledWith('/api/v1/users/2017-11-13', {
+        cancelToken: expect.anything(),
         params: {}
       });
     });
@@ -466,7 +467,10 @@ describe('Model', () => {
         .then(() => {})
         .catch(() => {});
 
-      expect(request.get).toHaveBeenCalledWith(model.url(), { params: {} });
+      expect(request.get).toHaveBeenCalledWith(model.url(), {
+        cancelToken: expect.anything(),
+        params: {}
+      });
     });
 
     it('Calls a get request with the url passed in though options', () => {
@@ -480,6 +484,7 @@ describe('Model', () => {
         .catch(() => {});
 
       expect(request.get).toHaveBeenCalledWith('/api/users/1', {
+        cancelToken: expect.anything(),
         params: {}
       });
     });
@@ -497,6 +502,7 @@ describe('Model', () => {
         .catch(() => {});
 
       expect(request.get).toHaveBeenCalledWith(model.url(), {
+        cancelToken: expect.anything(),
         params: { included: 'companies' }
       });
     });

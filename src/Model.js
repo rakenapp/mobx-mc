@@ -5,7 +5,7 @@ import pick from 'lodash.pick';
 import omit from 'lodash.omit';
 import forIn from 'lodash.forin';
 import { observable, action, runInAction, toJS } from 'mobx';
-import request from 'axios';
+import request, { CancelToken } from 'axios';
 
 // Throw an error when a URL is needed, and none is supplied.
 const urlError = () => {
@@ -249,7 +249,7 @@ class Model {
    * Fetch the model from the server.
    */
   @action
-  fetch(options = {}, globalOptions) {
+  fetch(options = {}) {
     // Merge in the any options with the default
     options = Object.assign(
       {
@@ -265,9 +265,12 @@ class Model {
     return new Promise((resolve, reject) => {
       request
         .get(url, {
+          cancelToken: new CancelToken(cancel => {
+            // An executor function receives a cancel function as a parameter
+            this.requestCanceller = cancel;
+          }),
           params: options.params ? options.params : {},
-          ...options.axios,
-          ...globalOptions
+          ...options.axios
         })
         .then(
           response => {
@@ -478,6 +481,15 @@ class Model {
         );
     });
   }
+
+  /**
+   * Cancel the current request
+   */
+  @action
+  cancelRequest = () => {
+    this.requestCanceller &&
+      this.requestCanceller('Operation canceled by the user.');
+  };
 }
 
 export default Model;
