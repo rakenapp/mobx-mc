@@ -285,7 +285,9 @@ class Model {
           error => {
             runInAction('fetch-error', () => {
               this.setRequestLabel('fetching', false);
-              reject(error);
+              if (!request.isCancel(error)) {
+                reject(error);
+              }
             });
           }
         );
@@ -485,11 +487,10 @@ class Model {
   /**
    * Cancel the current request
    */
-  @action
-  cancelRequest = () => {
+  cancelRequest() {
     this.requestCanceller &&
       this.requestCanceller('Operation canceled by the user.');
-  };
+  }
 }
 
 export default Model;

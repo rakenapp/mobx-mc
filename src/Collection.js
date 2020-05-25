@@ -431,7 +431,9 @@ class Collection {
           error => {
             runInAction('fetch-error', () => {
               this.setRequestLabel('fetching', false);
-              reject(error);
+              if (!request.isCancel(error)) {
+                reject(error);
+              }
             });
           }
         );
@@ -582,11 +584,10 @@ class Collection {
   /**
    * Cancel the current request
    */
-  @action
-  cancelRequest = () => {
+  cancelRequest() {
     this.requestCanceller &&
       this.requestCanceller('Operation canceled by the user.');
-  };
+  }
 }
 
 export default Collection;
