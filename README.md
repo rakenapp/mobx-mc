@@ -1,9 +1,52 @@
 ![](https://img.shields.io/npm/v/mobx-mc) ![CircleCI](https://img.shields.io/circleci/build/github/rakenapp/mobx-mc)
 
-## Table of Contents
+## Installation
 
-- [Installation](#installation)
-- [Introduction](#introduction)
+`npm install mobx-mc`
+
+`yarn add mobx-mc`
+
+## Introduction
+
+Mobx MC is a library inspired by both [Backbone](https://backbonejs.org/) and the approach of using domain stores and domain objects as described in the [Mobx Best Practices Documentation](https://mobx.js.org/best/store.html).
+
+Out of the box, Mobx MC:
+
+- Separates your server state cache from your global state.
+- Makes your data observable so you can track values and derive from it
+- Communicates with the server to fetch, save, and delete.
+- Manages observable states like fetching, saving, and deleting.
+
+The basic concept is that of a `Model` and a `Collection` of models. State is managed automatically, and CRUD is built-in. A classic example would be a to-do list, where each todo would be a model and the list of todos would be a collection.
+
+Mobx MC is pre-configured to sync with a RESTful API. Simply create a new Collection with the url of your resource endpoint:
+
+```javascript
+class Todo extends Model {}
+
+class Todos extends Collection {
+  model() {
+    return Todo;
+  }
+
+  url() {
+    return '/todos';
+  }
+}
+```
+
+The Collection and Model components together form a direct mapping of REST resources using the following methods:
+
+```javascript
+GET  /todos .... collection.fetch();
+POST /todos .... collection.create();
+GET  /todos/1 ... model.fetch();
+PATCH  /todos/1 ... model.save();
+DELETE  /todos/1 ... model.destroy();
+```
+
+## Documentation
+
 - [Model](#model)
   - [constructor(data, options)](#constructordata-options)
   - [applyOptions(options)](#applyoptionsoptions)
@@ -54,18 +97,6 @@
   - [getOrFetch(id, options)](#getorfetchid-options)
 - [Where is it used?](#where-is-it-used)
 - [License](#license)
-
-## Installation
-
-`npm install mobx-mc`
-
-`yarn add mobx-mc`
-
-## Introduction
-
-Mobx MC is a library inspired by both [Backbone](https://backbonejs.org/) models and collections and the approach of using domain stores and domain objects as described in the [Mobx Best Practices Documentation](https://mobx.js.org/best/store.html). If you haven't yet read this page, I highly recommend it if you are considering building a large scale application with Mobx.
-
-The basic concept is that of a `Model` and a `Collection` of models. State is managed automatically, and CRUD is built-in. A classic example would be a to-do list, where each task would be a model and the list of tasks would be a collection.
 
 ## Model
 
