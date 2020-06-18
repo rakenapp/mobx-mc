@@ -13,7 +13,7 @@ Mobx MC is a library inspired by both [Backbone](https://backbonejs.org/) and th
 Out of the box, Mobx MC:
 
 - Separates your server state cache from your global state.
-- Makes your data observable so you can track values and derive from it
+- Makes the data observable so you can track values and derive from it.
 - Communicates with the server to fetch, save, and delete.
 - Manages observable states like fetching, saving, and deleting.
 
