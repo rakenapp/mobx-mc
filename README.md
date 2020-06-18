@@ -238,7 +238,7 @@ Sets a value, or multiple values, on the `attributes` map. The Model's construct
 
 - `stripNonRest` (_Boolean_) - If `{stripNonRest: false}` is passed as an **option**, keys that are not specified in `restAttributes` will still be set on the `attributes` map. The default for this option is `true`.
 
-- `reset` (_Boolean_) - If `{reset: true}` is passed as an **option**, the entire `attributes` map will be reset with the passed in `data` (Equivalent of `attributes.clear()` && `attributes.merge(data)`). The default for this option is `false`, which result in a merge on the attributes (Equivalent of `attributes.merge(data`)). See the [Mobx documentation on Maps](https://mobx.js.org/refguide/map.html#observable-maps) for more information.
+- `reset` (_Boolean_) - If `{reset: true}` is passed as an **option**, the entire `attributes` map will be reset with the passed in `data` (Equivalent of `attributes.clear()` && `attributes.merge(data)`). The default for this option is `false`, which results in a merge operation (Equivalent of `attributes.merge(data`)). See the [Mobx documentation on Maps](https://mobx.js.org/refguide/map.html#observable-maps) for more information.
 
 ### parse(data)
 
