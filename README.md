@@ -418,7 +418,7 @@ Calling `model.fetch` will toggle a `fetching` observable property so you can re
 - `params` (Object) - Used to dynamically add query parameters to the url when fetching.
 - `url` (String) - On some occasions it may be desirable to override the `url` for a single request. The request will default to `model.url()` when this is not explicitly configured.
 
-In addition to the above, you can also pass in any options supported by the `set` method and these will be passed through to that method when handling the response from the server. Please note that the `reset` option will be `true` by default when calling `model.fetch`.
+In addition to the above, you can also pass in any options supported by the `set` method and these will be passed through to that method when handling the response from the server.
 
 ```javascript
 class User extends Model {
