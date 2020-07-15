@@ -10,9 +10,9 @@
 
 Mobx MC is a library inspired by both [Backbone](https://backbonejs.org/) and the approach of using domain stores and domain objects as described in the [Mobx Best Practices Documentation](https://mobx.js.org/best/store.html).
 
-Out of the box, Mobx MC:
+Mobx MC:
 
-- Separates your server state cache from your global state.
+- Separates your domain state from your global state.
 - Makes the data observable so you can track values and derive from it.
 - Communicates with the server to fetch, save, and delete.
 - Manages observable states like fetching, saving, and deleting.
