@@ -474,7 +474,7 @@ class Collection {
       // Model can create itself
       model
         .create(
-          null,
+          data,
           Object.assign(options, {
             url: options.url ? options.url : this.url()
           })
