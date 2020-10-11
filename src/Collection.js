@@ -475,10 +475,9 @@ class Collection {
       model
         .create(
           null,
-          {
+          Object.assign(options, {
             url: options.url ? options.url : this.url()
-          },
-          options
+          })
         )
         .then(
           (savedModel, response) => {
