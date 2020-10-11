@@ -380,6 +380,7 @@ class Model {
       {
         wait: false,
         method: 'post',
+        stripNonRest: true,
         notAttributes: false
       },
       options
@@ -396,7 +397,7 @@ class Model {
     }
 
     if (!options.wait) {
-      this.set(data);
+      this.set(data, options);
     } else {
       this.setRequestLabel('saving', true);
     }
@@ -407,7 +408,7 @@ class Model {
         .then(
           response => {
             runInAction('create-success', () => {
-              this.set(response.data);
+              this.set(response.data, options);
               this.setRequestLabel('saving', false);
               resolve(this);
             });

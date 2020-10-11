@@ -1032,7 +1032,12 @@ describe('Model', () => {
         .then(() => {})
         .catch(() => {});
 
-      expect(model.set).toHaveBeenCalledWith(userData);
+      expect(model.set).toHaveBeenCalledWith(userData, {
+        method: 'post',
+        notAttributes: false,
+        stripNonRest: true,
+        wait: false
+      });
     });
 
     it('resets to the original attributes on failed save to server if wait option is falsy', () => {
