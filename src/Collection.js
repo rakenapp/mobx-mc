@@ -473,9 +473,12 @@ class Collection {
 
       // Model can create itself
       model
-        .create(null, {
-          url: options.url ? options.url : this.url()
-        })
+        .create(
+          data,
+          Object.assign(options, {
+            url: options.url ? options.url : this.url()
+          })
+        )
         .then(
           (savedModel, response) => {
             runInAction('create-success', () => {
