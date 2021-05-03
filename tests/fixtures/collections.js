@@ -5,7 +5,7 @@ const usersData = [
     title: 'Mr',
     firstName: 'Bill',
     lastName: 'Murray',
-    email: 'lostintranslation@rakenapp.com',
+    email: 'lostintranslation@example.com',
     phone: '012345678',
     lastLogin: '2017-06-21T03:44:45+0000',
     company: {
@@ -18,7 +18,7 @@ const usersData = [
     title: 'Mr',
     firstName: 'John',
     lastName: 'Jones',
-    email: 'john.jones@rakenapp.com',
+    email: 'john.jones@example.com',
     phone: '012345678',
     lastLogin: '2017-06-21T03:44:45+0000',
     isPending: true,
@@ -32,7 +32,7 @@ const usersData = [
     title: 'Mr',
     firstName: 'Tim',
     lastName: 'Smith',
-    email: 'tim.smith@rakenapp.com',
+    email: 'tim.smith@example.com',
     phone: '012345678',
     company: {
       id: 2
@@ -44,7 +44,7 @@ const usersData = [
     title: 'Mr',
     firstName: 'Jane',
     lastName: 'Aire',
-    email: 'jane.aire@rakenapp.com',
+    email: 'jane.aire@example.com',
     phone: '012345678',
     lastLogin: '2017-06-21T03:44:45+0000',
     company: {
@@ -67,9 +67,9 @@ const companiesData =  [
         fileName: 'raken.jpg',
         mediaType: 'IMAGE',
         contentUrl:
-          'http://cdn.rakenapp.com/images/icon-2001270203581133964805.png',
+          'http://cdn.example.com/images/icon-2001270203581133964805.png',
         thumbUrl:
-          'http://cdn.rakenapp.com/images/icon-2001270203581133964805.png',
+          'http://cdn.example.com/images/icon-2001270203581133964805.png',
         contentType: 'image/png',
         etag: 'image/png',
         fileSize: 5215,
@@ -117,9 +117,9 @@ const companiesData =  [
         fileName: 'raken.jpg',
         mediaType: 'IMAGE',
         contentUrl:
-          'http://cdn.rakenapp.com/images/icon-2001270203581133964805.png',
+          'http://cdn.example.com/images/icon-2001270203581133964805.png',
         thumbUrl:
-          'http://cdn.rakenapp.com/images/icon-2001270203581133964805.png',
+          'http://cdn.example.com/images/icon-2001270203581133964805.png',
         contentType: 'image/png',
         etag: 'image/png',
         fileSize: 5215,

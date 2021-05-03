@@ -883,8 +883,8 @@ describe('Model', () => {
             createdBy: 2,
             fileName: 'user.png',
             mediaType: 'IMAGE',
-            contentUrl: 'https://cdn.rakenapp.com/ui/images/user.png',
-            thumbUrl: 'https://cdn.rakenapp.com/ui/images/user.png',
+            contentUrl: 'https://cdn.example.com/ui/images/user.png',
+            thumbUrl: 'https://cdn.example.com/ui/images/user.png',
             contentType: 'image/png',
             etag: 'image/png',
             fileSize: 5215,
@@ -917,7 +917,7 @@ describe('Model', () => {
           {
             firstName: 'Johnny',
             lastName: 'Doe',
-            username: 'lostintranslation@rakenapp.com',
+            username: 'lostintranslation@example.com',
             phone: '0211912340'
           },
           { wait: false }
@@ -938,7 +938,7 @@ describe('Model', () => {
                 data: {
                   firstName: 'Mike',
                   lastName: 'Doe',
-                  username: 'lostintranslation@rakenapp.com',
+                  username: 'lostintranslation@example.com',
                   phone: '0211912340'
                 }
               });
@@ -955,7 +955,7 @@ describe('Model', () => {
           {
             firstName: 'Mike',
             lastName: 'Doe',
-            username: 'lostintranslation@rakenapp.com',
+            username: 'lostintranslation@example.com',
             phone: '0211912340'
           },
           { wait: true }
@@ -977,7 +977,7 @@ describe('Model', () => {
           {
             firstName: 'Timmy',
             lastName: 'Doe',
-            username: 'lostintranslation@rakenapp.com',
+            username: 'lostintranslation@example.com',
             phone: '0211912340'
           },
           { wait: true }
