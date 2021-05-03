@@ -245,7 +245,7 @@ describe('Collection', () => {
           title: 'Mr',
           firstName: 'James',
           lastName: 'Thomas',
-          email: 'james.thomas@rakenapp.com',
+          email: 'james.thomas@example.com',
           phone: '012345678'
         },
         {
@@ -254,7 +254,7 @@ describe('Collection', () => {
           title: 'Master',
           firstName: 'John',
           lastName: 'Jones',
-          email: 'john.jones@rakenapp.com',
+          email: 'john.jones@example.com',
           phone: '012345678'
         }
       ]);
@@ -285,7 +285,7 @@ describe('Collection', () => {
             title: 'Mr',
             firstName: 'James',
             lastName: 'Thomas',
-            email: 'james.thomas@rakenapp.com',
+            email: 'james.thomas@example.com',
             phone: '012345678'
           },
           {
@@ -294,7 +294,7 @@ describe('Collection', () => {
             title: 'Master',
             firstName: 'John',
             lastName: 'Jones',
-            email: 'john.jones@rakenapp.com',
+            email: 'john.jones@example.com',
             phone: '012345678'
           }
         ],
@@ -319,7 +319,7 @@ describe('Collection', () => {
             title: 'Mr',
             firstName: 'James',
             lastName: 'Thomas',
-            email: 'james.thomas@rakenapp.com',
+            email: 'james.thomas@example.com',
             phone: '012345678'
           },
           {
@@ -328,7 +328,7 @@ describe('Collection', () => {
             title: 'Master',
             firstName: 'John',
             lastName: 'Jones',
-            email: 'john.jones@rakenapp.com',
+            email: 'john.jones@example.com',
             phone: '012345678'
           }
         ],
@@ -353,7 +353,7 @@ describe('Collection', () => {
             title: 'Mr',
             firstName: 'James',
             lastName: 'Thomas',
-            email: 'james.thomas@rakenapp.com',
+            email: 'james.thomas@example.com',
             phone: '012345678'
           },
           {
@@ -362,7 +362,7 @@ describe('Collection', () => {
             title: 'Master',
             firstName: 'John',
             lastName: 'Jones',
-            email: 'john.jones@rakenapp.com',
+            email: 'john.jones@example.com',
             phone: '012345678'
           }
         ],
@@ -389,7 +389,7 @@ describe('Collection', () => {
         title: 'Mr',
         firstName: 'Tim',
         lastName: 'Smith',
-        email: 'tim.smith@rakenapp.com',
+        email: 'tim.smith@example.com',
         phone: '012345678'
       };
 
@@ -412,12 +412,12 @@ describe('Collection', () => {
         title: 'Mr',
         firstName: 'Bill',
         lastName: 'Murray',
-        email: 'lostintranslation@rakenapp.com',
+        email: 'lostintranslation@example.com',
         phone: '012345678'
       });
 
       expect(collection.get('1').email).toEqual(
-        'lostintranslation@rakenapp.com'
+        'lostintranslation@example.com'
       );
     });
 
@@ -430,20 +430,20 @@ describe('Collection', () => {
         title: 'Mr',
         firstName: 'John',
         lastName: 'Jones',
-        email: 'john.jones@rakenapp.com',
+        email: 'john.jones@example.com',
         phone: '012345678'
       });
 
       collection.add(newModel);
 
-      expect(collection.get('2').email).toEqual('john.jones@rakenapp.com');
+      expect(collection.get('2').email).toEqual('john.jones@example.com');
     });
 
     it('Can receive an array of JSON representations', () => {
       collection.add(usersData);
 
-      expect(collection.get(1).email).toEqual('lostintranslation@rakenapp.com');
-      expect(collection.get(2).email).toEqual('john.jones@rakenapp.com');
+      expect(collection.get(1).email).toEqual('lostintranslation@example.com');
+      expect(collection.get(2).email).toEqual('john.jones@example.com');
     });
 
     it('Can receive an array of model instances', () => {
@@ -455,8 +455,8 @@ describe('Collection', () => {
 
       collection.add([newModel1, newModel2]);
 
-      expect(collection.get(1).email).toEqual('lostintranslation@rakenapp.com');
-      expect(collection.get(2).email).toEqual('john.jones@rakenapp.com');
+      expect(collection.get(1).email).toEqual('lostintranslation@example.com');
+      expect(collection.get(2).email).toEqual('john.jones@example.com');
     });
   });
 
@@ -481,7 +481,7 @@ describe('Collection', () => {
         title: 'Mrs',
         firstName: 'Aimee',
         lastName: 'Sorrell',
-        email: 'aimee@rakenapp.com',
+        email: 'aimee@example.com',
         phone: '0211912340',
         company: {
           id: 5
@@ -515,7 +515,7 @@ describe('Collection', () => {
         title: 'Mrs',
         firstName: 'Aimee',
         lastName: 'Sorrell',
-        email: 'aimee@rakenapp.com',
+        email: 'aimee@example.com',
         phone: '0211912340',
         company: {
           id: 5
@@ -694,12 +694,12 @@ describe('Collection', () => {
         title: 'Mr',
         firstName: 'Bill',
         lastName: 'Murray',
-        email: 'lostintranslation@rakenapp.com',
+        email: 'lostintranslation@example.com',
         phone: '012345678'
       });
 
       expect(collection.get('1').email).toEqual(
-        'lostintranslation@rakenapp.com'
+        'lostintranslation@example.com'
       );
     });
 
@@ -712,8 +712,8 @@ describe('Collection', () => {
 
       collection.pushModels([newModel1, newModel2]);
 
-      expect(collection.get(1).email).toEqual('lostintranslation@rakenapp.com');
-      expect(collection.get(2).email).toEqual('john.jones@rakenapp.com');
+      expect(collection.get(1).email).toEqual('lostintranslation@example.com');
+      expect(collection.get(2).email).toEqual('john.jones@example.com');
     });
 
     it('Rejects model instances that are not dervied from the correct class', () => {
@@ -992,7 +992,7 @@ describe('Collection', () => {
         title: 'Mr',
         firstName: 'Bill',
         lastName: 'Murray',
-        email: 'lostintranslation@rakenapp.com',
+        email: 'lostintranslation@example.com',
         phone: '012345678'
       });
 
@@ -1021,7 +1021,7 @@ describe('Collection', () => {
           title: 'Mr',
           firstName: 'Bill',
           lastName: 'Murray',
-          email: 'lostintranslation@rakenapp.com',
+          email: 'lostintranslation@example.com',
           phone: '012345678'
         })
         .then(model => {
@@ -1055,7 +1055,7 @@ describe('Collection', () => {
             title: 'Mr',
             firstName: 'Bill',
             lastName: 'Murray',
-            email: 'lostintranslation@rakenapp.com',
+            email: 'lostintranslation@example.com',
             phone: '012345678'
           },
           { wait: false }
@@ -1090,7 +1090,7 @@ describe('Collection', () => {
           title: 'Mr',
           firstName: 'Bill',
           lastName: 'Murray',
-          email: 'lostintranslation@rakenapp.com',
+          email: 'lostintranslation@example.com',
           phone: '012345678'
         },
         { wait: true }
@@ -1114,7 +1114,7 @@ describe('Collection', () => {
             title: 'Mr',
             firstName: 'Bill',
             lastName: 'Murray',
-            email: 'lostintranslation@rakenapp.com',
+            email: 'lostintranslation@example.com',
             phone: '012345678'
           },
           { wait: true }
@@ -1141,7 +1141,7 @@ describe('Collection', () => {
         title: 'Mr',
         firstName: 'Bill',
         lastName: 'Murray',
-        email: 'lostintranslation@rakenapp.com',
+        email: 'lostintranslation@example.com',
         phone: '012345678'
       });
 
@@ -1175,7 +1175,7 @@ describe('Collection', () => {
             title: 'Mr',
             firstName: 'Bill',
             lastName: 'Murray',
-            email: 'lostintranslation@rakenapp.com',
+            email: 'lostintranslation@example.com',
             phone: '012345678'
           },
           { wait: true }
@@ -1207,7 +1207,7 @@ describe('Collection', () => {
             title: 'Mr',
             firstName: 'Bill',
             lastName: 'Murray',
-            email: 'lostintranslation@rakenapp.com',
+            email: 'lostintranslation@example.com',
             phone: '012345678'
           },
           { wait: true }
@@ -1253,19 +1253,19 @@ describe('Collection', () => {
         },
         {
           id: 2,
-          email: 'updated@rakenapp.com'
+          email: 'updated@example.com'
         }
       ];
 
       expect(collection.get(1).firstName).not.toEqual('updatedFirstName');
       expect(collection.get(1).lastName).not.toEqual('updatedlastName');
-      expect(collection.get(2).email).not.toEqual('updated@rakenapp.com');
+      expect(collection.get(2).email).not.toEqual('updated@example.com');
 
       await collection.batchUpdate(updatedAttributes);
 
       expect(collection.get(1).firstName).toEqual('updatedFirstName');
       expect(collection.get(1).lastName).toEqual('updatedlastName');
-      expect(collection.get(2).email).toEqual('updated@rakenapp.com');
+      expect(collection.get(2).email).toEqual('updated@example.com');
     });
 
     it('PUT request body as an array of updated objects', async () => {
@@ -1282,7 +1282,7 @@ describe('Collection', () => {
         },
         {
           id: 2,
-          email: 'updated@rakenapp.com'
+          email: 'updated@example.com'
         }
       ];
 
@@ -1309,7 +1309,7 @@ describe('Collection', () => {
         },
         {
           id: 2,
-          email: 'updated@rakenapp.com'
+          email: 'updated@example.com'
         }
       ];
 
@@ -1318,7 +1318,7 @@ describe('Collection', () => {
       } catch (e) {
         expect(collection.get(1).firstName).not.toEqual('updatedFirstName');
         expect(collection.get(1).lastName).not.toEqual('updatedlastName');
-        expect(collection.get(2).email).not.toEqual('updated@rakenapp.com');
+        expect(collection.get(2).email).not.toEqual('updated@example.com');
       }
     });
   });

@@ -12,9 +12,9 @@ const companyData = {
       fileName: 'raken.jpg',
       mediaType: 'IMAGE',
       contentUrl:
-        'http://cdn.rakenapp.com/images/icon-2001270203581133964805.png',
+        'http://cdn.example.com/images/icon-2001270203581133964805.png',
       thumbUrl:
-        'http://cdn.rakenapp.com/images/icon-2001270203581133964805.png',
+        'http://cdn.example.com/images/icon-2001270203581133964805.png',
       contentType: 'image/png',
       etag: 'image/png',
       fileSize: 5215,
@@ -58,8 +58,8 @@ const userData = {
       createdBy: 2,
       fileName: 'user.png',
       mediaType: 'IMAGE',
-      contentUrl: 'https://cdn.rakenapp.com/ui/images/user.png',
-      thumbUrl: 'https://cdn.rakenapp.com/ui/images/user.png',
+      contentUrl: 'https://cdn.example.com/ui/images/user.png',
+      thumbUrl: 'https://cdn.example.com/ui/images/user.png',
       contentType: 'image/png',
       etag: 'image/png',
       fileSize: 5215,
