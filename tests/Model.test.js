@@ -38,7 +38,8 @@ describe('Model', () => {
 
   describe('constructor with initial state', () => {
     beforeEach(() => {
-      spyOn(Model.prototype, 'set');
+      console.log(Model.prototype.set);
+      jest.spyOn(Model.prototype, 'set');
       model = new Model({
         name: 'John',
         number: 1

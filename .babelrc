@@ -1,14 +1,29 @@
 {
-    "presets": [
-        "@babel/preset-env"
-    ],
-    "plugins": [
-        ["@babel/plugin-proposal-decorators",{"legacy": true}],
-        ["@babel/plugin-proposal-class-properties", { "loose": true }]
-    ],
-    "env": {
-        "test": {
-          "plugins": ["@babel/plugin-transform-runtime"]
-        }
+  "presets": [
+    "@babel/preset-env"
+  ],
+  "assumptions": {
+    "setPublicClassFields": true
+  },
+  "plugins": [
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
       }
+    ],
+    [
+      "@babel/plugin-proposal-class-properties",
+      {
+        "loose": false
+      }
+    ]
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "@babel/plugin-transform-runtime"
+      ]
+    }
+  }
 }
