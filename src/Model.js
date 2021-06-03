@@ -4,7 +4,7 @@ import pickBy from 'lodash.pickby';
 import pick from 'lodash.pick';
 import omit from 'lodash.omit';
 import forIn from 'lodash.forin';
-import { observable, action, runInAction, toJS } from 'mobx';
+import { observable, action, runInAction, toJS, makeObservable } from 'mobx';
 import request, { CancelToken } from 'axios';
 
 // Throw an error when a URL is needed, and none is supplied.
@@ -22,6 +22,7 @@ class Model {
   }
 
   constructor(data = {}, options) {
+    makeObservable(this);
     // Merge in the any options with the default
     options = Object.assign(
       {

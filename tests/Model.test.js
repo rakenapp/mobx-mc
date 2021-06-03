@@ -1,6 +1,6 @@
 import omit from 'lodash.omit';
 import request from 'axios';
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import Model from '../src/Model';
 import Collection from '../src/Collection';
 import { userData, companyData } from './fixtures/models';
@@ -204,6 +204,12 @@ describe('Model', () => {
 
       class SubModel extends Model {
         @observable greeting;
+
+        constructor(data, options) {
+          super(data, options);
+
+          makeObservable(this);
+        }
 
         url() {
           return '/api/me';

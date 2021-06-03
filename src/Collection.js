@@ -1,6 +1,12 @@
 import isEmpty from 'lodash.isempty';
 import difference from 'lodash.difference';
-import { action, observable, computed, runInAction } from 'mobx';
+import {
+  action,
+  observable,
+  computed,
+  runInAction,
+  makeObservable
+} from 'mobx';
 import request, { CancelToken } from 'axios';
 import qs from 'querystringify';
 import Model from './Model';
@@ -10,6 +16,7 @@ class Collection {
   @observable saving;
 
   constructor(data = {}, options = {}) {
+    makeObservable(this);
     this.models = observable([]);
     this.fetching = false;
     this.saving = false;
