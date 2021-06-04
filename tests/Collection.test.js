@@ -30,8 +30,9 @@ class UserCollection extends Collection {
 
 describe('Collection', () => {
   describe('constructor with no initial state', () => {
+    let spy;
     beforeEach(() => {
-      spyOn(Collection.prototype, 'set');
+      spy = spyOn(Collection.prototype, 'set');
 
       //main store of an App
       rootStore = {
@@ -59,7 +60,7 @@ describe('Collection', () => {
     });
 
     it('Does not call set method as there is no initial state', () => {
-      expect(collection.set).not.toHaveBeenCalled();
+      expect(spy).not.toHaveBeenCalled();
     });
 
     it('Creates a reference to an optional parent object', () => {
@@ -68,16 +69,12 @@ describe('Collection', () => {
   });
 
   describe('constructor with initial state', () => {
-    beforeAll(() => {
-      spyOn(Collection.prototype, 'set');
-    });
-
-    beforeEach(() => {
-      collection = new Collection(usersData);
-    });
-
     it('Calls set method with the initial state', () => {
-      expect(collection.set).toHaveBeenCalledWith(usersData);
+      const spy = spyOn(Collection.prototype, 'set');
+
+      collection = new Collection(usersData);
+
+      expect(spy).toHaveBeenCalledWith(usersData);
     });
   });
 

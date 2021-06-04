@@ -243,7 +243,7 @@ class Model {
    * Return a plain object representation of the attributes map
    */
   toJSON() {
-    return toJS(this.attributes);
+    return Object.fromEntries(this.attributes);
   }
 
   /**
@@ -275,7 +275,7 @@ class Model {
         })
         .then(
           response => {
-            runInAction('fetch-success', () => {
+            runInAction(() => {
               this.set(this.setRestAttributeDefaults(response.data), {
                 reset: options.reset
               });
@@ -284,7 +284,7 @@ class Model {
             });
           },
           error => {
-            runInAction('fetch-error', () => {
+            runInAction(() => {
               this.setRequestLabel('fetching', false);
               if (!request.isCancel(error)) {
                 reject(error);
@@ -344,7 +344,7 @@ class Model {
         options.axios
       ).then(
         response => {
-          runInAction('save-success', () => {
+          runInAction(() => {
             if (options.reset) {
               this.set(response.data, options);
             } else {
@@ -356,7 +356,7 @@ class Model {
           });
         },
         error => {
-          runInAction('save-error', () => {
+          runInAction(() => {
             if (!options.wait) {
               this.set(originalAttributes, options);
             }
@@ -408,14 +408,14 @@ class Model {
         .post(options.url ? options.url : this.url(), data, options.axios)
         .then(
           response => {
-            runInAction('create-success', () => {
+            runInAction(() => {
               this.set(response.data, options);
               this.setRequestLabel('saving', false);
               resolve(this);
             });
           },
           error => {
-            runInAction('create-error', () => {
+            runInAction(() => {
               if (!options.wait) {
                 this.set(originalAttributes);
               }
@@ -460,7 +460,7 @@ class Model {
         .delete(options.url ? options.url : this.url(), options.axios)
         .then(
           response => {
-            runInAction('destroy-success', () => {
+            runInAction(() => {
               if (options.wait && this.collection) {
                 this.collection.remove(this);
               }
@@ -469,7 +469,7 @@ class Model {
             });
           },
           error => {
-            runInAction('destroy-error', () => {
+            runInAction(() => {
               // Put it back if delete request fails
               if (!options.wait && this.collection) {
                 if (error && error.response && error.response.status === 404)

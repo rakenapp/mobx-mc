@@ -1,6 +1,6 @@
 import omit from 'lodash.omit';
 import request from 'axios';
-import { observable, makeObservable } from 'mobx';
+import { observable, makeObservable, configure } from 'mobx';
 import Model from '../src/Model';
 import Collection from '../src/Collection';
 import { userData, companyData } from './fixtures/models';
@@ -12,6 +12,12 @@ let rootStore;
 describe('Model', () => {
   describe('constructor with no initial state', () => {
     beforeEach(() => {
+      configure({
+        safeDescriptors: false,
+        computedRequiresReaction: false,
+        enforceActions: 'never'
+      });
+
       spyOn(Model.prototype, 'set');
 
       collection = {};
@@ -37,17 +43,14 @@ describe('Model', () => {
   });
 
   describe('constructor with initial state', () => {
-    beforeEach(() => {
-      console.log(Model.prototype.set);
-      jest.spyOn(Model.prototype, 'set');
+    it('Calls set method with the initial state', () => {
+      const spy = jest.spyOn(Model.prototype, 'set');
+
       model = new Model({
         name: 'John',
         number: 1
       });
-    });
-
-    it('Calls set method with the initial state', () => {
-      expect(model.set).toHaveBeenCalledWith(
+      expect(spy).toHaveBeenCalledWith(
         {
           name: 'John',
           number: 1
@@ -246,7 +249,7 @@ describe('Model', () => {
         undefined
       );
 
-      expect(model.attributes.toJSON()).toEqual({
+      expect(model.toJSON()).toEqual({
         title: 'Mr',
         firstName: 'John',
         lastName: 'Doe'
