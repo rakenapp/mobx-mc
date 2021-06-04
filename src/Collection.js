@@ -269,7 +269,7 @@ class Collection {
         attributes[this.getModelIdAttribute(attributes.type)]
       );
       if (existingModel) {
-        originalAttributes.push(Object.fromEntries(existingModel.attributes));
+        originalAttributes.push(existingModel.toJSON());
         existingModel.set(attributes);
       }
     });

@@ -1,6 +1,6 @@
 import omit from 'lodash.omit';
 import request from 'axios';
-import { observable, makeObservable, configure } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import Model from '../src/Model';
 import Collection from '../src/Collection';
 import { userData, companyData } from './fixtures/models';
@@ -12,12 +12,6 @@ let rootStore;
 describe('Model', () => {
   describe('constructor with no initial state', () => {
     beforeEach(() => {
-      configure({
-        safeDescriptors: false,
-        computedRequiresReaction: false,
-        enforceActions: 'never'
-      });
-
       spyOn(Model.prototype, 'set');
 
       collection = {};
@@ -208,12 +202,6 @@ describe('Model', () => {
 
       class SubModel extends Model {
         @observable greeting;
-
-        constructor(data, options) {
-          super(data, options);
-
-          makeObservable(this);
-        }
 
         url() {
           return '/api/me';
