@@ -34,7 +34,7 @@
     "lodash.pick": "^4.4.0",
     "lodash.pickby": "^4.6.0",
     "lodash.result": "^4.5.2",
-    "mobx": "^6.3.2",
+    "mobx": "6.3.2",
     "querystringify": "^2.1.1",
     "uuid-v4": "^0.1.0"
   },
