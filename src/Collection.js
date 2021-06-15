@@ -1,6 +1,12 @@
 import isEmpty from 'lodash.isempty';
 import difference from 'lodash.difference';
-import { action, observable, computed, runInAction } from 'mobx';
+import {
+  action,
+  observable,
+  computed,
+  runInAction,
+  makeObservable
+} from 'mobx';
 import request, { CancelToken } from 'axios';
 import qs from 'querystringify';
 import Model from './Model';
@@ -10,6 +16,7 @@ class Collection {
   @observable saving;
 
   constructor(data = {}, options = {}) {
+    makeObservable(this);
     this.models = observable([]);
     this.fetching = false;
     this.saving = false;
@@ -262,7 +269,7 @@ class Collection {
         attributes[this.getModelIdAttribute(attributes.type)]
       );
       if (existingModel) {
-        originalAttributes.push(existingModel.attributes.toJS());
+        originalAttributes.push(existingModel.toJSON());
         existingModel.set(attributes);
       }
     });
@@ -270,13 +277,13 @@ class Collection {
     return new Promise((resolve, reject) => {
       request.put(options.url ? options.url : this.url(), arrayAttributes).then(
         () => {
-          runInAction('update-success', () => {
+          runInAction(() => {
             this.setRequestLabel('saving', false);
             resolve(this);
           });
         },
         error => {
-          runInAction('update-error', () => {
+          runInAction(() => {
             originalAttributes.forEach(attribute => {
               let updatedModel = this.get(attribute.id);
               updatedModel.set(attribute);
@@ -416,7 +423,7 @@ class Collection {
         })
         .then(
           response => {
-            runInAction('fetch-success', () => {
+            runInAction(() => {
               this.set(response.data, {
                 add: options.add,
                 update: options.update,
@@ -429,7 +436,7 @@ class Collection {
             });
           },
           error => {
-            runInAction('fetch-error', () => {
+            runInAction(() => {
               this.setRequestLabel('fetching', false);
               if (!request.isCancel(error)) {
                 reject(error);
@@ -481,7 +488,7 @@ class Collection {
         )
         .then(
           (savedModel, response) => {
-            runInAction('create-success', () => {
+            runInAction(() => {
               if (options.wait) {
                 this.add(savedModel, options);
               }
@@ -492,7 +499,7 @@ class Collection {
             });
           },
           error => {
-            runInAction('create-error', () => {
+            runInAction(() => {
               this.setRequestLabel('saving', false);
 
               // Remove the model if unsuccessful
