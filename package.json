@@ -1,6 +1,6 @@
 {
   "name": "mobx-mc",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Mobx Store Model-Collection Library",
   "main": "lib/index.js",
   "scripts": {
@@ -34,7 +34,7 @@
     "lodash.pick": "^4.4.0",
     "lodash.pickby": "^4.6.0",
     "lodash.result": "^4.5.2",
-    "mobx": "4.13.1",
+    "mobx": "5.15.7",
     "querystringify": "^2.1.1",
     "uuid-v4": "^0.1.0"
   },

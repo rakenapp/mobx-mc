@@ -2840,9 +2840,10 @@ mkdirp@^0.5.0, mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
-mobx@4.13.1:
-  version "4.13.1"
-  resolved "https://registry.yarnpkg.com/mobx/-/mobx-4.13.1.tgz#317c35f255f0ae343efa261458177da0e0637792"
+mobx@5.15.7:
+  version "5.15.7"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-5.15.7.tgz#b9a5f2b6251f5d96980d13c78e9b5d8d4ce22665"
+  integrity sha512-wyM3FghTkhmC+hQjyPGGFdpehrcX1KOXsDuERhfK2YbJemkUhEB+6wzEN639T21onxlfYBmriA1PFnvxTUhcKw==
 
 mri@^1.1.4:
   version "1.1.4"
