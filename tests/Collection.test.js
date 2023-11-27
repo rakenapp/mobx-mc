@@ -30,8 +30,9 @@ class UserCollection extends Collection {
 
 describe('Collection', () => {
   describe('constructor with no initial state', () => {
+    let spy;
     beforeEach(() => {
-      spyOn(Collection.prototype, 'set');
+      spy = spyOn(Collection.prototype, 'set');
 
       //main store of an App
       rootStore = {
@@ -59,7 +60,7 @@ describe('Collection', () => {
     });
 
     it('Does not call set method as there is no initial state', () => {
-      expect(collection.set).not.toHaveBeenCalled();
+      expect(spy).not.toHaveBeenCalled();
     });
 
     it('Creates a reference to an optional parent object', () => {
@@ -68,16 +69,12 @@ describe('Collection', () => {
   });
 
   describe('constructor with initial state', () => {
-    beforeAll(() => {
-      spyOn(Collection.prototype, 'set');
-    });
-
-    beforeEach(() => {
-      collection = new Collection(usersData);
-    });
-
     it('Calls set method with the initial state', () => {
-      expect(collection.set).toHaveBeenCalledWith(usersData);
+      const spy = spyOn(Collection.prototype, 'set');
+
+      collection = new Collection(usersData);
+
+      expect(spy).toHaveBeenCalledWith(usersData);
     });
   });
 
@@ -872,7 +869,7 @@ describe('Collection', () => {
     it('Calls the set action if the request is successful', () => {
       spyOn(Collection.prototype, 'set');
 
-      spyOn(request, 'get').and.callFake(function() {
+      spyOn(request, 'get').and.callFake(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -903,7 +900,7 @@ describe('Collection', () => {
     it('Passes the set options through to the set action', () => {
       spyOn(Collection.prototype, 'set');
 
-      spyOn(request, 'get').and.callFake(function() {
+      spyOn(request, 'get').and.callFake(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -933,7 +930,7 @@ describe('Collection', () => {
     it('allows for the individual set options to be overriden', () => {
       spyOn(Collection.prototype, 'set');
 
-      spyOn(request, 'get').and.callFake(function() {
+      spyOn(request, 'get').and.callFake(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -1002,7 +999,7 @@ describe('Collection', () => {
     it('Creates a new model instance with the passed in data, returns instance once promise is resolved.', () => {
       collection = new Collection();
 
-      spyOn(request, 'post').and.callFake(function() {
+      spyOn(request, 'post').and.callFake(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -1024,14 +1021,14 @@ describe('Collection', () => {
           email: 'lostintranslation@example.com',
           phone: '012345678'
         })
-        .then(model => {
+        .then((model) => {
           expect(collection.length).toBe(1);
           expect(model instanceof Model).toBeTruthy();
         });
     });
 
     it('Adds the new model to the collection immediately if wait options is falsy', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function() {
+      spyOn(Model.prototype, 'create').and.callFake(function () {
         return {
           then(cb) {
             setTimeout(() => {
@@ -1067,7 +1064,7 @@ describe('Collection', () => {
     });
 
     it('Adds the new model only after successful creation on server if wait options is truthy', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function() {
+      spyOn(Model.prototype, 'create').and.callFake(function () {
         return {
           then(cb) {
             setTimeout(() => {
@@ -1126,7 +1123,7 @@ describe('Collection', () => {
     });
 
     it('Calls the create action on the model with the collections URL', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function() {
+      spyOn(Model.prototype, 'create').and.callFake(function () {
         return {
           then() {
             return this;
@@ -1151,7 +1148,7 @@ describe('Collection', () => {
     });
 
     it('Sets the creating label to falsy after the model.create method completes successfuly', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function() {
+      spyOn(Model.prototype, 'create').and.callFake(function () {
         return {
           then(cb) {
             setTimeout(() => {
@@ -1240,7 +1237,7 @@ describe('Collection', () => {
 
     it('update the models in a collection by new attributes', async () => {
       jest.spyOn(request, 'put').mockImplementation(() => {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           resolve();
         });
       });
@@ -1270,7 +1267,7 @@ describe('Collection', () => {
 
     it('PUT request body as an array of updated objects', async () => {
       jest.spyOn(request, 'put').mockImplementation(() => {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           resolve();
         });
       });

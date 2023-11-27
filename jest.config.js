@@ -1,6 +1,6 @@
 module.exports = {
-    transform: {
-        "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
-    },
-    timers: "fake"
+  timers: 'fake',
+  moduleNameMapper: {
+    axios: 'axios/dist/node/axios.cjs'
+  }
 };
