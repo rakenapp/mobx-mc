@@ -1,6 +1,6 @@
 import omit from 'lodash.omit';
 import request from 'axios';
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import Model from '../src/Model';
 import Collection from '../src/Collection';
 import { userData, companyData } from './fixtures/models';
@@ -37,16 +37,14 @@ describe('Model', () => {
   });
 
   describe('constructor with initial state', () => {
-    beforeEach(() => {
-      spyOn(Model.prototype, 'set');
+    it('Calls set method with the initial state', () => {
+      const spy = jest.spyOn(Model.prototype, 'set');
+
       model = new Model({
         name: 'John',
         number: 1
       });
-    });
-
-    it('Calls set method with the initial state', () => {
-      expect(model.set).toHaveBeenCalledWith(
+      expect(spy).toHaveBeenCalledWith(
         {
           name: 'John',
           number: 1
@@ -122,7 +120,7 @@ describe('Model', () => {
         date: '2017-11-13'
       });
 
-      spyOn(request, 'get').and.callFake(function() {
+      spyOn(request, 'get').and.callFake(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -184,7 +182,7 @@ describe('Model', () => {
 
   describe('restAttributes', () => {
     it('Defines a white list of fieldnames allowed in the attributes map', () => {
-      spyOn(request, 'post').and.callFake(function() {
+      spyOn(request, 'post').and.callFake(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -203,7 +201,7 @@ describe('Model', () => {
       });
 
       class SubModel extends Model {
-        @observable greeting;
+        @observable accessor greeting;
 
         url() {
           return '/api/me';
@@ -239,7 +237,7 @@ describe('Model', () => {
         undefined
       );
 
-      expect(model.attributes.toJSON()).toEqual({
+      expect(model.toJSON()).toEqual({
         title: 'Mr',
         firstName: 'John',
         lastName: 'Doe'
@@ -448,7 +446,7 @@ describe('Model', () => {
     });
 
     it('Calls a get request with the models url by default', () => {
-      spyOn(request, 'get').and.callFake(function() {
+      spyOn(request, 'get').and.callFake(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -510,7 +508,7 @@ describe('Model', () => {
     it('Calls the set method if the request is successful', () => {
       spyOn(Model.prototype, 'set');
 
-      spyOn(request, 'get').and.callFake(function() {
+      spyOn(request, 'get').and.callFake(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -744,7 +742,7 @@ describe('Model', () => {
     it('Calls the set method if the request is successful', () => {
       spyOn(Model.prototype, 'set');
 
-      spyOn(request, 'patch').and.callFake(function() {
+      spyOn(request, 'patch').and.callFake(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -772,7 +770,7 @@ describe('Model', () => {
     });
 
     it('Resolve a successful Promise with an updated Model ', () => {
-      spyOn(request, 'patch').and.callFake(function() {
+      spyOn(request, 'patch').and.callFake(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -896,7 +894,7 @@ describe('Model', () => {
     });
 
     it('Immediately sets the data on the model if wait option is falsy', () => {
-      spyOn(request, 'post').and.callFake(function() {
+      spyOn(request, 'post').and.callFake(function () {
         return {
           then(cb) {
             setTimeout(() => {
@@ -929,7 +927,7 @@ describe('Model', () => {
     });
 
     it('Waits for successful response from server before updating model if wait option is truthy', () => {
-      spyOn(request, 'post').and.callFake(function() {
+      spyOn(request, 'post').and.callFake(function () {
         return {
           then(cb) {
             setTimeout(() => {
@@ -1013,7 +1011,7 @@ describe('Model', () => {
     it('calls the models set action with the response from successful save to server', () => {
       spyOn(Model.prototype, 'set');
 
-      spyOn(request, 'post').and.callFake(function() {
+      spyOn(request, 'post').and.callFake(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -1140,7 +1138,7 @@ describe('Model', () => {
     });
 
     it('Waits until a successful response from server before removing model from collection if wait options is truthy', () => {
-      spyOn(request, 'delete').and.callFake(function() {
+      spyOn(request, 'delete').and.callFake(function () {
         return {
           then(cb) {
             setTimeout(() => {
