@@ -1,7 +1,5 @@
 {
-  "presets": [
-    "@babel/preset-env"
-  ],
+  "presets": ["@babel/preset-env"],
   "plugins": [
     [
       "@babel/plugin-proposal-decorators",
@@ -15,18 +13,14 @@
         "loose": false
       }
     ],
-    [
-      "@babel/plugin-transform-class-static-block"
-    ]
+    ["@babel/plugin-transform-class-static-block"]
   ],
   "assumptions": {
     "setPublicClassFields": true
   },
   "env": {
     "test": {
-      "plugins": [
-        "@babel/plugin-transform-runtime"
-      ]
+      "plugins": ["@babel/plugin-transform-runtime"]
     }
   }
 }
