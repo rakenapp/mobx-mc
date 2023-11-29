@@ -1021,7 +1021,7 @@ describe('Collection', () => {
           email: 'lostintranslation@example.com',
           phone: '012345678'
         })
-        .then((model) => {
+        .then(model => {
           expect(collection.length).toBe(1);
           expect(model instanceof Model).toBeTruthy();
         });
@@ -1237,7 +1237,7 @@ describe('Collection', () => {
 
     it('update the models in a collection by new attributes', async () => {
       jest.spyOn(request, 'put').mockImplementation(() => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           resolve();
         });
       });
@@ -1267,7 +1267,7 @@ describe('Collection', () => {
 
     it('PUT request body as an array of updated objects', async () => {
       jest.spyOn(request, 'put').mockImplementation(() => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           resolve();
         });
       });

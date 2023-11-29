@@ -71,12 +71,12 @@ class Model {
    * Create getters/setters for the allowed attributes
    */
   defineProperties() {
-    this.restAttributes.forEach((key) => {
+    this.restAttributes.forEach(key => {
       Object.defineProperty(this, key, {
         get: () => {
           return this.attributes.get(key);
         },
-        set: (value) => {
+        set: value => {
           this.attributes.set(key, value);
         },
         enumerable: true,
@@ -165,7 +165,7 @@ class Model {
 
     // Strip out any undefined keys.
     if (options.stripUndefined) {
-      data = pickBy(data, (prop) => prop !== undefined);
+      data = pickBy(data, prop => prop !== undefined);
     }
 
     // Strip out any keys not specificly set as rest attributes.
@@ -265,7 +265,7 @@ class Model {
     return new Promise((resolve, reject) => {
       request
         .get(url, {
-          cancelToken: new CancelToken((cancel) => {
+          cancelToken: new CancelToken(cancel => {
             // An executor function receives a cancel function as a parameter
             this.requestCanceller = cancel;
           }),
@@ -273,7 +273,7 @@ class Model {
           ...options.axios
         })
         .then(
-          (response) => {
+          response => {
             runInAction(() => {
               this.set(this.setRestAttributeDefaults(response.data), {
                 reset: options.reset
@@ -282,7 +282,7 @@ class Model {
               resolve(this);
             });
           },
-          (error) => {
+          error => {
             runInAction(() => {
               this.setRequestLabel('fetching', false);
               if (!request.isCancel(error)) {
@@ -342,7 +342,7 @@ class Model {
         data,
         options.axios
       ).then(
-        (response) => {
+        response => {
           runInAction(() => {
             if (options.reset) {
               this.set(response.data, options);
@@ -354,7 +354,7 @@ class Model {
             resolve(this);
           });
         },
-        (error) => {
+        error => {
           runInAction(() => {
             if (!options.wait) {
               this.set(originalAttributes, options);
@@ -406,14 +406,14 @@ class Model {
       request
         .post(options.url ? options.url : this.url(), data, options.axios)
         .then(
-          (response) => {
+          response => {
             runInAction(() => {
               this.set(response.data, options);
               this.setRequestLabel('saving', false);
               resolve(this);
             });
           },
-          (error) => {
+          error => {
             runInAction(() => {
               if (!options.wait) {
                 this.set(originalAttributes);
@@ -458,7 +458,7 @@ class Model {
       request
         .delete(options.url ? options.url : this.url(), options.axios)
         .then(
-          (response) => {
+          response => {
             runInAction(() => {
               if (options.wait && this.collection) {
                 this.collection.remove(this);
@@ -467,7 +467,7 @@ class Model {
               resolve(this);
             });
           },
-          (error) => {
+          error => {
             runInAction(() => {
               // Put it back if delete request fails
               if (!options.wait && this.collection) {

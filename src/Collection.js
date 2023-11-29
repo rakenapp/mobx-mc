@@ -81,7 +81,7 @@ class Collection {
    * Gets the unique ids of all the items in the collection
    */
   ids() {
-    return this.models.map((model) => model.uniqueId);
+    return this.models.map(model => model.uniqueId);
   }
 
   /**
@@ -111,7 +111,7 @@ class Collection {
    * Get a model with the given id or uuid
    */
   get(uniqueId) {
-    return this.models.find((model) => model.uniqueId === uniqueId);
+    return this.models.find(model => model.uniqueId === uniqueId);
   }
 
   /**
@@ -180,12 +180,12 @@ class Collection {
     );
 
     if (options.remove) {
-      const ids = models.map((model) => model.id);
+      const ids = models.map(model => model.id);
 
       this.spliceModels(difference(this.ids(), ids));
     }
 
-    models.forEach((data) => {
+    models.forEach(data => {
       const model = this.get(data[this.getModelIdAttribute(data.type)]);
 
       if (model && options.update)
@@ -257,7 +257,7 @@ class Collection {
     const originalAttributes = [];
     this.setRequestLabel('saving', true);
 
-    arrayAttributes.forEach((attributes) => {
+    arrayAttributes.forEach(attributes => {
       const existingModel = this.get(
         attributes[this.getModelIdAttribute(attributes.type)]
       );
@@ -275,9 +275,9 @@ class Collection {
             resolve(this);
           });
         },
-        (error) => {
+        error => {
           runInAction(() => {
-            originalAttributes.forEach((attribute) => {
+            originalAttributes.forEach(attribute => {
               let updatedModel = this.get(attribute.id);
               updatedModel.set(attribute);
             });
@@ -298,7 +298,7 @@ class Collection {
     // Handle single model
     if (!Array.isArray(models)) models = [models];
 
-    const instances = models.map((model) => {
+    const instances = models.map(model => {
       // Get the type of Model
       const CollectionModel = this.model(model.type);
 
@@ -354,7 +354,7 @@ class Collection {
     // Handle single model
     if (!Array.isArray(models)) models = [models];
 
-    const ids = models.map((model) => {
+    const ids = models.map(model => {
       return model.uniqueId;
     });
 
@@ -366,7 +366,7 @@ class Collection {
    */
   @action
   spliceModels(ids = []) {
-    ids.forEach((id) => {
+    ids.forEach(id => {
       const model = this.get(id);
       if (!model) return;
 
@@ -404,18 +404,18 @@ class Collection {
       // Optionally the request above could also be done as
       request
         .get(options.url, {
-          cancelToken: new CancelToken((cancel) => {
+          cancelToken: new CancelToken(cancel => {
             // An executor function receives a cancel function as a parameter
             this.requestCanceller = cancel;
           }),
           params: options.params,
           ...options.axios,
-          paramsSerializer: (params) => {
+          paramsSerializer: params => {
             return qs.stringify(params);
           }
         })
         .then(
-          (response) => {
+          response => {
             runInAction(() => {
               this.set(response.data, {
                 add: options.add,
@@ -428,7 +428,7 @@ class Collection {
               resolve(response);
             });
           },
-          (error) => {
+          error => {
             runInAction(() => {
               this.setRequestLabel('fetching', false);
               if (!request.isCancel(error)) {
@@ -491,7 +491,7 @@ class Collection {
               resolve(savedModel);
             });
           },
-          (error) => {
+          error => {
             runInAction(() => {
               this.setRequestLabel('saving', false);
 
@@ -541,12 +541,12 @@ class Collection {
 
       if (options.fetchExisting) {
         model.fetch(options).then(
-          (response) => {
+          response => {
             if (options.success) {
               options.success(model, response);
             }
           },
-          (error) => {
+          error => {
             if (options.error) {
               options.error(error.response);
             }
@@ -574,7 +574,7 @@ class Collection {
           options.success(model, response);
         }
       },
-      (error) => {
+      error => {
         if (options.error) {
           options.error(error.response);
         }

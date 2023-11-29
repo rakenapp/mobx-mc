@@ -796,7 +796,7 @@ describe('Model', () => {
             wait: true
           }
         )
-        .then((updatedModel) => expect(updatedModel.firstName).toEqual('Rick'));
+        .then(updatedModel => expect(updatedModel.firstName).toEqual('Rick'));
     });
 
     it('Resets the attributes to the original state if the request fails and wait option is falsy', () => {
