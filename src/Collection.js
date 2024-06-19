@@ -249,47 +249,6 @@ class Collection {
   }
 
   /**
-   * Update collection by an array of models
-   */
-  @action
-  batchUpdate(arrayAttributes = [], options) {
-    options = Object.assign({}, options);
-    const originalAttributes = [];
-    this.setRequestLabel('saving', true);
-
-    arrayAttributes.forEach(attributes => {
-      const existingModel = this.get(
-        attributes[this.getModelIdAttribute(attributes.type)]
-      );
-      if (existingModel) {
-        originalAttributes.push(existingModel.toJSON());
-        existingModel.set(attributes);
-      }
-    });
-
-    return new Promise((resolve, reject) => {
-      request.put(options.url ? options.url : this.url(), arrayAttributes).then(
-        () => {
-          runInAction(() => {
-            this.setRequestLabel('saving', false);
-            resolve(this);
-          });
-        },
-        error => {
-          runInAction(() => {
-            originalAttributes.forEach(attribute => {
-              let updatedModel = this.get(attribute.id);
-              updatedModel.set(attribute);
-            });
-            this.setRequestLabel('saving', false);
-            reject(error);
-          });
-        }
-      );
-    });
-  }
-
-  /**
    * Adds a collection of models.
    * Returns the added models.
    */
@@ -382,7 +341,7 @@ class Collection {
    * or removing.
    */
   @action
-  fetch(options = {}) {
+  async fetch(options = {}) {
     // Merge in the any options with the default
     options = Object.assign(
       {
@@ -400,44 +359,33 @@ class Collection {
 
     this.setRequestLabel('fetching', true);
 
-    return new Promise((resolve, reject) => {
-      // Optionally the request above could also be done as
-      request
-        .get(options.url, {
-          cancelToken: new CancelToken(cancel => {
-            // An executor function receives a cancel function as a parameter
-            this.requestCanceller = cancel;
-          }),
-          params: options.params,
-          ...options.axios,
-          paramsSerializer: params => {
-            return qs.stringify(params);
-          }
-        })
-        .then(
-          response => {
-            runInAction(() => {
-              this.set(response.data, {
-                add: options.add,
-                update: options.update,
-                merge: options.merge,
-                remove: options.remove,
-                unshift: options.unshift
-              });
-              this.setRequestLabel('fetching', false);
-              resolve(response);
-            });
-          },
-          error => {
-            runInAction(() => {
-              this.setRequestLabel('fetching', false);
-              if (!request.isCancel(error)) {
-                reject(error);
-              }
-            });
-          }
-        );
-    });
+    try {
+      const response = await request.get(options.url, {
+        cancelToken: new CancelToken(cancel => {
+          // An executor function receives a cancel function as a parameter
+          this.requestCanceller = cancel;
+        }),
+        params: options.params,
+        ...options.axios,
+        paramsSerializer: params => {
+          return qs.stringify(params);
+        }
+      });
+
+      this.set(response.data, {
+        add: options.add,
+        update: options.update,
+        merge: options.merge,
+        remove: options.remove,
+        unshift: options.unshift
+      });
+    } catch (error) {
+      if (!request.isCancel(error)) {
+        return error;
+      }
+    } finally {
+      this.setRequestLabel('fetching', false);
+    }
   }
 
   /**
@@ -447,7 +395,7 @@ class Collection {
    * can be tuned.
    */
   @action
-  create(data = {}, options) {
+  async create(data = {}, options) {
     // Merge in the any options with the default
     options = Object.assign(
       {
@@ -463,46 +411,35 @@ class Collection {
 
     const model = new ModelClass(data, this.modelOptions);
 
-    return new Promise((resolve, reject) => {
+    try {
       if (!options.wait) {
         this.add(model, options);
-        resolve(model);
+        return model;
       } else {
         this.setRequestLabel('saving', true);
       }
 
       // Model can create itself
-      model
-        .create(
-          data,
-          Object.assign(options, {
-            url: options.url ? options.url : this.url()
-          })
-        )
-        .then(
-          (savedModel, response) => {
-            runInAction(() => {
-              if (options.wait) {
-                this.add(savedModel, options);
-              }
+      const savedModel = await model.create(
+        data,
+        Object.assign(options, {
+          url: options.url ? options.url : this.url()
+        })
+      );
 
-              this.setRequestLabel('saving', false);
+      if (options.wait) {
+        this.add(savedModel, options);
+      }
 
-              resolve(savedModel);
-            });
-          },
-          error => {
-            runInAction(() => {
-              this.setRequestLabel('saving', false);
+      return savedModel;
+    } catch (error) {
+      // Remove the model if unsuccessful
+      this.remove(model);
 
-              // Remove the model if unsuccessful
-              this.remove(model);
-
-              reject(error);
-            });
-          }
-        );
-    });
+      return error;
+    } finally {
+      this.setRequestLabel('saving', false);
+    }
   }
 
   /**
@@ -528,60 +465,6 @@ class Collection {
   @action
   clear() {
     this.clearModels();
-  }
-
-  /**
-   * Finds a model by id or fetches it
-   * before adding it to the collection
-   */
-  @action
-  getOrFetch(id, options = {}) {
-    if (this.get(id)) {
-      const model = this.get(id);
-
-      if (options.fetchExisting) {
-        model.fetch(options).then(
-          response => {
-            if (options.success) {
-              options.success(model, response);
-            }
-          },
-          error => {
-            if (options.error) {
-              options.error(error.response);
-            }
-          }
-        );
-      } else if (options.success) {
-        options.success(model);
-      }
-
-      return model;
-    }
-
-    const CollectionModel = this.model();
-
-    const model = new CollectionModel(
-      { [this.getModelIdAttribute()]: id },
-      this.modelOptions
-    );
-
-    model.fetch(options).then(
-      (model, response) => {
-        this.add(model);
-
-        if (options.success) {
-          options.success(model, response);
-        }
-      },
-      error => {
-        if (options.error) {
-          options.error(error.response);
-        }
-      }
-    );
-
-    return model;
   }
 
   /**

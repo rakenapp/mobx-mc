@@ -770,10 +770,6 @@ const newUser = users.create({
 // POST request to '/users'.  New model added to the collection
 ```
 
-### getOrFetch(id, options)
-
-Convenience method. Gets a model from the server or from the collection if a model with that `id` already exists.
-
 ## Where is it used?
 
 Developed and tested in production at [Raken](https://www.rakenapp.com/)

@@ -32,7 +32,7 @@ describe('Collection', () => {
   describe('constructor with no initial state', () => {
     let spy;
     beforeEach(() => {
-      spy = spyOn(Collection.prototype, 'set');
+      spy = jest.spyOn(Collection.prototype, 'set');
 
       //main store of an App
       rootStore = {
@@ -70,7 +70,7 @@ describe('Collection', () => {
 
   describe('constructor with initial state', () => {
     it('Calls set method with the initial state', () => {
-      const spy = spyOn(Collection.prototype, 'set');
+      const spy = jest.spyOn(Collection.prototype, 'set');
 
       collection = new Collection(usersData);
 
@@ -184,7 +184,7 @@ describe('Collection', () => {
 
   describe('set action', () => {
     beforeEach(() => {
-      spyOn(Collection.prototype, 'setModels').and.callThrough();
+      jest.spyOn(Collection.prototype, 'setModels');
     });
 
     it('Calls the correct set method for each data type', () => {
@@ -374,7 +374,7 @@ describe('Collection', () => {
 
   describe('add action', () => {
     beforeEach(() => {
-      spyOn(Collection.prototype, 'setModels').and.callThrough();
+      jest.spyOn(Collection.prototype, 'setModels');
 
       collection = new UserCollection();
     });
@@ -523,165 +523,6 @@ describe('Collection', () => {
     });
   });
 
-  describe('getOrFetch action', () => {
-    describe('Model exists in collection with fetchExsiting option set to false', () => {
-      afterEach(() => {
-        jest.clearAllMocks();
-      });
-
-      it('Returns the model instance and does not fetch', () => {
-        jest.spyOn(request, 'get').mockImplementation(() => {
-          return new Promise((resolve, reject) => {
-            resolve({});
-          });
-        });
-
-        class SubModel extends Model {
-          idAttribute() {
-            return 'uuid';
-          }
-        }
-
-        class SubCollection extends Collection {
-          url() {
-            return 'jsonapi/users';
-          }
-
-          model() {
-            return SubModel;
-          }
-        }
-
-        collection = new SubCollection([
-          {
-            uuid: '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
-          }
-        ]);
-
-        const model = collection.getOrFetch(
-          '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
-        );
-
-        expect(collection.get('3c59d5f0-d958-4cd5-a81b-2a87d835921f')).toEqual(
-          model
-        );
-
-        expect(request.get).not.toHaveBeenCalled();
-      });
-    });
-
-    describe('Model exists in collection with fetchExsiting option set to true', () => {
-      afterEach(() => {
-        jest.clearAllMocks();
-      });
-
-      it('Returns the model instance and also re-fetches', () => {
-        jest.spyOn(request, 'get').mockImplementation(() => {
-          return new Promise((resolve, reject) => {
-            resolve({});
-          });
-        });
-
-        class SubModel extends Model {
-          idAttribute() {
-            return 'uuid';
-          }
-        }
-
-        class SubCollection extends Collection {
-          url() {
-            return 'jsonapi/users';
-          }
-
-          model() {
-            return SubModel;
-          }
-        }
-
-        collection = new SubCollection([
-          {
-            uuid: '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
-          }
-        ]);
-
-        const model = collection.getOrFetch(
-          '3c59d5f0-d958-4cd5-a81b-2a87d835921f',
-          {
-            fetchExisting: true
-          }
-        );
-
-        expect(collection.get('3c59d5f0-d958-4cd5-a81b-2a87d835921f')).toEqual(
-          model
-        );
-
-        expect(request.get).toHaveBeenCalledWith(
-          'jsonapi/users/3c59d5f0-d958-4cd5-a81b-2a87d835921f',
-          {
-            cancelToken: expect.anything(),
-            params: {}
-          }
-        );
-      });
-    });
-
-    describe('Model does not exist in collection', () => {
-      afterEach(() => {
-        jest.clearAllMocks();
-      });
-
-      it('Creates a new model, fetches it then adds it to the collection', () => {
-        jest.spyOn(request, 'get').mockImplementation(() => {
-          return new Promise((resolve, reject) => {
-            resolve({});
-          });
-        });
-
-        class SubModel extends Model {
-          idAttribute() {
-            return 'uuid';
-          }
-        }
-
-        class SubCollection extends Collection {
-          url() {
-            return 'jsonapi/users';
-          }
-
-          model() {
-            return SubModel;
-          }
-        }
-
-        collection = new SubCollection();
-
-        const model = collection.getOrFetch(
-          '3c59d5f0-d958-4cd5-a81b-2a87d835921f',
-          {
-            success: () => {
-              expect(collection.length).toBe(1);
-              expect(collection.at(0).id).toBe(
-                '3c59d5f0-d958-4cd5-a81b-2a87d835921f'
-              );
-            }
-          }
-        );
-
-        expect(model instanceof SubModel).toBeTruthy();
-        expect(model.id).toBe('3c59d5f0-d958-4cd5-a81b-2a87d835921f');
-        expect(model.collection).toBe(collection);
-
-        expect(request.get).toHaveBeenCalledWith(
-          'jsonapi/users/3c59d5f0-d958-4cd5-a81b-2a87d835921f',
-          {
-            cancelToken: expect.anything(),
-            params: {}
-          }
-        );
-      });
-    });
-  });
-
   describe('pushModels action', () => {
     it('Instantiates models from JSON', () => {
       collection = new UserCollection();
@@ -750,7 +591,7 @@ describe('Collection', () => {
 
   describe('remove action', () => {
     beforeEach(() => {
-      spyOn(Collection.prototype, 'spliceModels').and.callThrough();
+      jest.spyOn(Collection.prototype, 'spliceModels');
       collection = new Collection(usersData);
     });
 
@@ -806,6 +647,10 @@ describe('Collection', () => {
       collection = new SubCollection();
     });
 
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
     it('Sets the fetching request label to truthy', () => {
       collection
         .fetch()
@@ -816,7 +661,7 @@ describe('Collection', () => {
     });
 
     it('Calls a get request with the collections url by default', () => {
-      spyOn(request, 'get');
+      jest.spyOn(request, 'get');
 
       collection
         .fetch()
@@ -831,7 +676,7 @@ describe('Collection', () => {
     });
 
     it('Calls a get request with the url passed in though options', () => {
-      spyOn(request, 'get');
+      jest.spyOn(request, 'get');
 
       collection
         .fetch({
@@ -848,7 +693,7 @@ describe('Collection', () => {
     });
 
     it('Sends any params included in the options argument', () => {
-      spyOn(request, 'get');
+      jest.spyOn(request, 'get');
 
       collection
         .fetch({
@@ -866,10 +711,10 @@ describe('Collection', () => {
       });
     });
 
-    it('Calls the set action if the request is successful', () => {
-      spyOn(Collection.prototype, 'set');
+    it('Calls the set action if the request is successful', async () => {
+      jest.spyOn(Collection.prototype, 'set');
 
-      spyOn(request, 'get').and.callFake(function () {
+      jest.spyOn(request, 'get').mockImplementation(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -883,10 +728,7 @@ describe('Collection', () => {
         };
       });
 
-      collection
-        .fetch()
-        .then(() => {})
-        .catch(() => {});
+      await collection.fetch();
 
       expect(collection.set).toHaveBeenCalledWith(companiesData, {
         add: true,
@@ -894,13 +736,14 @@ describe('Collection', () => {
         remove: true,
         merge: false
       });
+
       expect(collection.fetching).toBeFalsy();
     });
 
-    it('Passes the set options through to the set action', () => {
-      spyOn(Collection.prototype, 'set');
+    it('Passes the set options through to the set action', async () => {
+      jest.spyOn(Collection.prototype, 'set');
 
-      spyOn(request, 'get').and.callFake(function () {
+      jest.spyOn(request, 'get').mockImplementation(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -914,10 +757,12 @@ describe('Collection', () => {
         };
       });
 
-      collection
-        .fetch({ add: true, update: false, merge: false, remove: false })
-        .then(() => {})
-        .catch(() => {});
+      await collection.fetch({
+        add: true,
+        update: false,
+        merge: false,
+        remove: false
+      });
 
       expect(collection.set).toHaveBeenCalledWith(companiesData, {
         add: true,
@@ -927,10 +772,10 @@ describe('Collection', () => {
       });
     });
 
-    it('allows for the individual set options to be overriden', () => {
-      spyOn(Collection.prototype, 'set');
+    it('allows for the individual set options to be overriden', async () => {
+      jest.spyOn(Collection.prototype, 'set');
 
-      spyOn(request, 'get').and.callFake(function () {
+      jest.spyOn(request, 'get').mockImplementation(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -944,10 +789,7 @@ describe('Collection', () => {
         };
       });
 
-      collection
-        .fetch({ remove: false })
-        .then(() => {})
-        .catch(() => {});
+      await collection.fetch({ remove: false });
 
       expect(collection.set).toHaveBeenCalledWith(companiesData, {
         add: true,
@@ -957,22 +799,19 @@ describe('Collection', () => {
       });
     });
 
-    it('Sets the fetching request label to falsy if the request fails', () => {
-      spyOn(Collection.prototype, 'set');
+    it('Sets the fetching request label to falsy if the request fails', async () => {
+      jest.spyOn(Collection.prototype, 'set');
 
       jest.spyOn(request, 'get').mockImplementation(() => {
         return new Promise((resolve, reject) => {
-          reject();
+          reject(new Error('Request failed'));
         });
       });
 
-      collection.fetch().then(
-        () => {},
-        () => {
-          expect(collection.set).not.toHaveBeenCalled();
-          expect(collection.fetching).toBeFalsy();
-        }
-      );
+      await collection.fetch();
+
+      expect(collection.set).not.toHaveBeenCalled();
+      expect(collection.fetching).toBeFalsy();
     });
   });
 
@@ -996,10 +835,10 @@ describe('Collection', () => {
       expect(collection.length).toEqual(4);
     });
 
-    it('Creates a new model instance with the passed in data, returns instance once promise is resolved.', () => {
+    it('Creates a new model instance with the passed in data, returns instance once promise is resolved.', async () => {
       collection = new Collection();
 
-      spyOn(request, 'post').and.callFake(function () {
+      jest.spyOn(request, 'post').mockImplementation(function () {
         return {
           then(cb) {
             cb.call(null, {
@@ -1012,76 +851,71 @@ describe('Collection', () => {
       });
 
       // No op as model with id exists
-      collection
-        .create({
+      const model = await collection.create({
+        type: 'User',
+        title: 'Mr',
+        firstName: 'Bill',
+        lastName: 'Murray',
+        email: 'lostintranslation@example.com',
+        phone: '012345678'
+      });
+
+      expect(collection.length).toBe(1);
+      expect(model instanceof Model).toBeTruthy();
+    });
+
+    it('Adds the new model to the collection immediately if wait options is falsy', async () => {
+      jest.spyOn(Model.prototype, 'create').mockImplementation(function () {
+        return {
+          then(cb) {
+            setTimeout(() => {
+              cb.call(null, {
+                status: 201
+              });
+            }, 1000);
+
+            return this;
+          },
+          catch: () => {}
+        };
+      });
+
+      collection = new Collection();
+
+      await collection.create(
+        {
           type: 'User',
           title: 'Mr',
           firstName: 'Bill',
           lastName: 'Murray',
           email: 'lostintranslation@example.com',
           phone: '012345678'
-        })
-        .then(model => {
-          expect(collection.length).toBe(1);
-          expect(model instanceof Model).toBeTruthy();
-        });
-    });
-
-    it('Adds the new model to the collection immediately if wait options is falsy', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function () {
-        return {
-          then(cb) {
-            setTimeout(() => {
-              cb.call(null, {
-                status: 201
-              });
-            }, 1000);
-
-            return this;
-          },
-          catch: () => {}
-        };
-      });
-
-      collection = new Collection();
-
-      collection
-        .create(
-          {
-            type: 'User',
-            title: 'Mr',
-            firstName: 'Bill',
-            lastName: 'Murray',
-            email: 'lostintranslation@example.com',
-            phone: '012345678'
-          },
-          { wait: false }
-        )
-        .then(() => {})
-        .catch(() => {});
+        },
+        { wait: false }
+      );
 
       expect(collection.length).toEqual(1);
     });
 
-    it('Adds the new model only after successful creation on server if wait options is truthy', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function () {
-        return {
-          then(cb) {
-            setTimeout(() => {
-              cb.call(null, {
-                status: 201
-              });
-            }, 1000);
-
-            return this;
-          },
-          catch: () => {}
-        };
+    it('Adds the new model only after successful creation on server if wait options is truthy', async () => {
+      jest.spyOn(Model.prototype, 'create').mockImplementation(function () {
+        return new Promise(resolve => {
+          return setTimeout(() => {
+            resolve({
+              type: 'User',
+              title: 'Mr',
+              firstName: 'Bill',
+              lastName: 'Murray',
+              email: 'lostintranslation@example.com',
+              phone: '012345678'
+            });
+          }, 100);
+        });
       });
 
       collection = new Collection();
 
-      collection.create(
+      const promise = collection.create(
         {
           type: 'User',
           title: 'Mr',
@@ -1098,42 +932,45 @@ describe('Collection', () => {
       // Fast-forward until all timers have been executed
       jest.runOnlyPendingTimers();
 
+      await promise;
+
       expect(collection.length).toEqual(1);
     });
 
-    it('Sets the creating label to truthy if wait option is truthy', () => {
-      collection = new Collection();
-
-      collection
-        .create(
-          {
-            type: 'User',
-            title: 'Mr',
-            firstName: 'Bill',
-            lastName: 'Murray',
-            email: 'lostintranslation@example.com',
-            phone: '012345678'
-          },
-          { wait: true }
-        )
-        .then(() => {})
-        .catch(() => {});
-
-      expect(collection.saving).toBeTruthy();
-    });
-
-    it('Calls the create action on the model with the collections URL', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function () {
-        return {
-          then() {
-            return this;
-          }
-        };
+    it('Sets the creating label to truthy if wait option is truthy', async () => {
+      jest.spyOn(Model.prototype, 'create').mockImplementation(() => {
+        return new Promise(resolve => {
+          resolve();
+        });
       });
 
       collection = new Collection();
 
-      collection.create({
+      collection.create(
+        {
+          type: 'User',
+          title: 'Mr',
+          firstName: 'Bill',
+          lastName: 'Murray',
+          email: 'lostintranslation@example.com',
+          phone: '012345678'
+        },
+        { wait: true }
+      );
+
+      expect(collection.saving).toBeTruthy();
+    });
+
+    it('Calls the create action on the model with the collections URL', async () => {
+      jest.spyOn(Model.prototype, 'create').mockImplementation(function () {
+        return new Promise(resolve => {
+          resolve(this);
+        });
+      });
+
+      collection = new Collection();
+
+      await collection.create({
         type: 'User',
         title: 'Mr',
         firstName: 'Bill',
@@ -1142,79 +979,73 @@ describe('Collection', () => {
         phone: '012345678'
       });
 
-      expect(Model.prototype.create.calls.mostRecent().args[1].url).toEqual(
+      expect(Model.prototype.create.mock.lastCall[1].url).toEqual(
         collection.url()
       );
     });
 
-    it('Sets the creating label to falsy after the model.create method completes successfuly', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function () {
-        return {
-          then(cb) {
-            setTimeout(() => {
-              cb.call(null, {
-                status: 201
-              });
-            }, 1000);
-
-            return this;
-          },
-          catch: () => {}
-        };
+    it('Sets the creating label to falsy after the model.create method completes successfuly', async () => {
+      jest.spyOn(Model.prototype, 'create').mockImplementation(function () {
+        return new Promise(resolve => {
+          return setTimeout(() => {
+            resolve({
+              type: 'User',
+              title: 'Mr',
+              firstName: 'Bill',
+              lastName: 'Murray',
+              email: 'lostintranslation@example.com',
+              phone: '012345678'
+            });
+          }, 100);
+        });
       });
 
       collection = new Collection();
 
-      collection
-        .create(
-          {
-            type: 'User',
-            title: 'Mr',
-            firstName: 'Bill',
-            lastName: 'Murray',
-            email: 'lostintranslation@example.com',
-            phone: '012345678'
-          },
-          { wait: true }
-        )
-        .then(() => {})
-        .catch(() => {});
+      const promise = collection.create(
+        {
+          type: 'User',
+          title: 'Mr',
+          firstName: 'Bill',
+          lastName: 'Murray',
+          email: 'lostintranslation@example.com',
+          phone: '012345678'
+        },
+        { wait: true }
+      );
 
       expect(collection.saving).toBeTruthy();
 
       // Fast-forward until all timers have been executed
       jest.runOnlyPendingTimers();
 
+      await promise;
+
       expect(collection.saving).toBeFalsy();
     });
 
-    it('Sets the creating label to falsy after the model.create method fails', () => {
-      jest.spyOn(request, 'post').mockImplementation(() => {
-        return new Promise((resolve, reject) => {
+    it('Sets the creating label to falsy after the model.create method fails', async () => {
+      jest.spyOn(Model.prototype, 'create').mockImplementation(function () {
+        return new Promise(resolve, reject => {
           reject();
         });
       });
 
       collection = new Collection();
 
-      collection
-        .create(
-          {
-            type: 'User',
-            title: 'Mr',
-            firstName: 'Bill',
-            lastName: 'Murray',
-            email: 'lostintranslation@example.com',
-            phone: '012345678'
-          },
-          { wait: true }
-        )
-        .then(
-          () => {},
-          () => {
-            expect(collection.saving).toBeFalsy();
-          }
-        );
+      await collection.create(
+        {
+          type: 'User',
+          title: 'Mr',
+          firstName: 'Bill',
+          lastName: 'Murray',
+          email: 'lostintranslation@example.com',
+          phone: '012345678'
+        },
+        { wait: true }
+      );
+
+      expect(collection.saving).toBeFalsy();
     });
   });
 
@@ -1227,96 +1058,6 @@ describe('Collection', () => {
       expect(collection.length).toBe(4);
       collection.reset();
       expect(collection.length).toBe(0);
-    });
-  });
-
-  describe('batchUpdate action', () => {
-    beforeEach(() => {
-      collection = new UserCollection(usersData);
-    });
-
-    it('update the models in a collection by new attributes', async () => {
-      jest.spyOn(request, 'put').mockImplementation(() => {
-        return new Promise(resolve => {
-          resolve();
-        });
-      });
-
-      const updatedAttributes = [
-        {
-          id: 1,
-          firstName: 'updatedFirstName',
-          lastName: 'updatedlastName'
-        },
-        {
-          id: 2,
-          email: 'updated@example.com'
-        }
-      ];
-
-      expect(collection.get(1).firstName).not.toEqual('updatedFirstName');
-      expect(collection.get(1).lastName).not.toEqual('updatedlastName');
-      expect(collection.get(2).email).not.toEqual('updated@example.com');
-
-      await collection.batchUpdate(updatedAttributes);
-
-      expect(collection.get(1).firstName).toEqual('updatedFirstName');
-      expect(collection.get(1).lastName).toEqual('updatedlastName');
-      expect(collection.get(2).email).toEqual('updated@example.com');
-    });
-
-    it('PUT request body as an array of updated objects', async () => {
-      jest.spyOn(request, 'put').mockImplementation(() => {
-        return new Promise(resolve => {
-          resolve();
-        });
-      });
-      const updatedAttributes = [
-        {
-          id: 1,
-          firstName: 'updatedFirstName',
-          lastName: 'updatedlastName'
-        },
-        {
-          id: 2,
-          email: 'updated@example.com'
-        }
-      ];
-
-      await collection.batchUpdate(updatedAttributes);
-
-      expect(request.put).toHaveBeenCalledWith(
-        collection.url(),
-        updatedAttributes
-      );
-    });
-
-    it('rollback to the original state if the request fails', async () => {
-      jest.spyOn(request, 'patch').mockImplementation(() => {
-        return new Promise((resolve, reject) => {
-          reject();
-        });
-      });
-
-      const updatedAttributes = [
-        {
-          id: 1,
-          firstName: 'updatedFirstName',
-          lastName: 'updatedlastName'
-        },
-        {
-          id: 2,
-          email: 'updated@example.com'
-        }
-      ];
-
-      try {
-        await collection.batchUpdate(updatedAttributes);
-      } catch (e) {
-        expect(collection.get(1).firstName).not.toEqual('updatedFirstName');
-        expect(collection.get(1).lastName).not.toEqual('updatedlastName');
-        expect(collection.get(2).email).not.toEqual('updated@example.com');
-      }
     });
   });
 });
