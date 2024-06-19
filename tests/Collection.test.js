@@ -31,6 +31,7 @@ class UserCollection extends Collection {
 describe('Collection', () => {
   describe('constructor with no initial state', () => {
     let spy;
+
     beforeEach(() => {
       spy = jest.spyOn(Collection.prototype, 'set');
 
@@ -804,7 +805,7 @@ describe('Collection', () => {
 
       jest.spyOn(request, 'get').mockImplementation(() => {
         return new Promise((resolve, reject) => {
-          reject(new Error('Request failed'));
+          reject();
         });
       });
 

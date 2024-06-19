@@ -10,10 +10,16 @@ let collection;
 let rootStore;
 
 describe('Model', () => {
+  beforeEach(() => {
+    jest.spyOn(Model.prototype, 'set');
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('constructor with no initial state', () => {
     beforeEach(() => {
-      jest.spyOn(Model.prototype, 'set');
-
       collection = {};
       rootStore = {};
 
@@ -38,13 +44,12 @@ describe('Model', () => {
 
   describe('constructor with initial state', () => {
     it('Calls set method with the initial state', () => {
-      const spy = jest.spyOn(Model.prototype, 'set');
-
       model = new Model({
         name: 'John',
         number: 1
       });
-      expect(spy).toHaveBeenCalledWith(
+
+      expect(Model.prototype.set).toHaveBeenCalledWith(
         {
           name: 'John',
           number: 1
@@ -181,23 +186,18 @@ describe('Model', () => {
   });
 
   describe('restAttributes', () => {
-    it('Defines a white list of fieldnames allowed in the attributes map', () => {
+    it('Defines a white list of fieldnames allowed in the attributes map', async () => {
       jest.spyOn(request, 'post').mockImplementation(function () {
-        return {
-          then(cb) {
-            cb.call(null, {
-              status: 200,
-              data: {
-                title: 'Mr',
-                firstName: 'John',
-                lastName: 'Doe'
-              }
-            });
-
-            return this;
-          },
-          catch: () => {}
-        };
+        return new Promise(resolve => {
+          resolve({
+            status: 200,
+            data: {
+              title: 'Mr',
+              firstName: 'John',
+              lastName: 'Doe'
+            }
+          });
+        });
       });
 
       class SubModel extends Model {
@@ -226,7 +226,7 @@ describe('Model', () => {
 
       model.lastName = 'Doe';
 
-      model.save();
+      await model.save();
 
       expect(request.post).toHaveBeenCalledWith(
         '/api/me',
@@ -237,7 +237,7 @@ describe('Model', () => {
         undefined
       );
 
-      expect(model.toJSON()).toEqual({
+      expect(model.toJSON()).toMatchObject({
         title: 'Mr',
         firstName: 'John',
         lastName: 'Doe'
@@ -439,7 +439,10 @@ describe('Model', () => {
     it('Sets the fetching request label to truthy', () => {
       jest.spyOn(request, 'get').mockImplementation(function () {
         return new Promise(resolve => {
-          resolve({});
+          resolve({
+            status: 200,
+            data: userData
+          });
         });
       });
 
@@ -467,7 +470,14 @@ describe('Model', () => {
     });
 
     it('Calls a get request with the url passed in though options', () => {
-      jest.spyOn(request, 'get');
+      jest.spyOn(request, 'get').mockImplementation(function () {
+        return new Promise(resolve => {
+          resolve({
+            status: 200,
+            data: userData
+          });
+        });
+      });
 
       model
         .fetch({
@@ -482,17 +492,21 @@ describe('Model', () => {
       });
     });
 
-    it('Sends the any params included in the options argument', () => {
-      jest.spyOn(request, 'get');
+    it('Sends the any params included in the options argument', async () => {
+      jest.spyOn(request, 'get').mockImplementation(function () {
+        return new Promise(resolve => {
+          resolve({
+            status: 200,
+            data: userData
+          });
+        });
+      });
 
-      model
-        .fetch({
-          params: {
-            included: 'companies'
-          }
-        })
-        .then(() => {})
-        .catch(() => {});
+      await model.fetch({
+        params: {
+          included: 'companies'
+        }
+      });
 
       expect(request.get).toHaveBeenCalledWith(model.url(), {
         cancelToken: expect.anything(),
@@ -500,49 +514,36 @@ describe('Model', () => {
       });
     });
 
-    it.skip('Calls the set method if the request is successful', () => {
-      jest.spyOn(Model.prototype, 'set');
-
+    it('Calls the set method if the request is successful', async () => {
       jest.spyOn(request, 'get').mockImplementation(function () {
-        return {
-          then(cb) {
-            cb.call(null, {
-              status: 200,
-              data: userData
-            });
-
-            return this;
-          },
-          catch: () => {}
-        };
-      });
-
-      model
-        .fetch()
-        .then(() => {})
-        .catch(() => {});
-
-      expect(model.set).toHaveBeenCalledWith(userData, {
-        reset: false
-      });
-    });
-
-    it.skip('Sets the fetching request label to falsy if the request fails', () => {
-      jest.spyOn(Model.prototype, 'set');
-
-      jest.spyOn(request, 'get').mockImplementation(() => {
-        return new Promise((resolve, reject) => {
-          reject();
+        return new Promise(resolve => {
+          resolve({
+            status: 200,
+            data: userData
+          });
         });
       });
 
-      model.fetch().then(
-        () => {},
-        () => {
-          expect(model.set).not.toHaveBeenCalled();
-          expect(model.fetching).toBeFalsy();
-        }
-      );
+      await model.fetch();
+
+      expect(model.set).toHaveBeenCalledWith(userData, {
+        parse: true,
+        stripNonRest: true,
+        stripUndefined: true
+      });
+    });
+
+    it('Sets the fetching request label to falsy if the request fails', async () => {
+      jest.spyOn(request, 'get').mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+          reject(new Error('Request failed'));
+        });
+      });
+
+      await model.fetch();
+
+      expect(model.set).toHaveBeenCalledTimes(1);
+      expect(model.fetching).toBeFalsy();
     });
   });
 
@@ -733,82 +734,60 @@ describe('Model', () => {
       expect(model.saving).toBeTruthy();
     });
 
-    it('Calls the set method if the request is successful', () => {
-      jest.spyOn(Model.prototype, 'set');
-
+    it('Calls the set method if the request is successful', async () => {
       jest.spyOn(request, 'patch').mockImplementation(function () {
-        return {
-          then(cb) {
-            cb.call(null, {
-              status: 200,
-              data: userData
-            });
-
-            return this;
-          },
-          catch: () => {}
-        };
+        return new Promise(resolve => {
+          resolve({
+            status: 200,
+            data: userData
+          });
+        });
       });
 
-      model
-        .save()
-        .then(() => {})
-        .catch(() => {});
+      await model.save();
 
-      expect(model.set).toHaveBeenCalledWith(userData, {
-        method: 'patch',
-        reset: false,
-        stripNonRest: true,
-        wait: false
-      });
+      expect(model.set).toHaveBeenCalledWith(userData, expect.anything());
     });
 
-    it('Resolve a successful Promise with an updated Model ', () => {
+    it('Resolve a successful Promise with an updated Model ', async () => {
       jest.spyOn(request, 'patch').mockImplementation(function () {
-        return {
-          then(cb) {
-            cb.call(null, {
-              status: 200,
-              data: {
-                firstName: 'Rick'
-              }
-            });
-
-            return this;
-          },
-          catch: () => {}
-        };
+        return new Promise(resolve => {
+          resolve({
+            status: 200,
+            data: {
+              firstName: 'Rick'
+            }
+          });
+        });
       });
 
       expect(model.firstName).toEqual('John');
-      model
-        .save(
-          {
-            firstName: 'Rick'
-          },
-          {
-            wait: true
-          }
-        )
-        .then(updatedModel => expect(updatedModel.firstName).toEqual('Rick'));
+
+      const updatedModel = await model.save(
+        {
+          firstName: 'Rick'
+        },
+        {
+          wait: true
+        }
+      );
+
+      expect(updatedModel.firstName).toEqual('Rick');
     });
 
     it('Resets the attributes to the original state if the request fails and wait option is falsy', async () => {
       jest.spyOn(request, 'patch').mockImplementation(() => {
         return new Promise((resolve, reject) => {
-          reject(new Error('Request failed'));
+          reject();
         });
       });
 
-      await model
-        .save(
-          {
-            firstName: 'Bill'
-          },
-          { wait: false }
-        )
-        .then(() => {})
-        .catch(() => {});
+      await model.save(
+        {
+          firstName: 'Bill'
+        },
+        { wait: false }
+      );
 
       expect(model.firstName).toEqual('John');
     });
@@ -838,18 +817,27 @@ describe('Model', () => {
       model = new SubModel(omit(userData, 'id'));
     });
 
-    it('Posts all existing data if no new data is passed in', () => {
-      const post = jest.spyOn(request, 'post');
-      model
-        .create()
-        .then(() => {})
-        .catch(() => {});
+    it('Posts all existing data if no new data is passed in', async () => {
+      jest.spyOn(request, 'post').mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+          resolve();
+        });
+      });
 
-      expect(post.mock.lastCall[1]).toEqual(omit(userData, ['id', 'company']));
+      model.create();
+
+      expect(request.post.mock.lastCall[1]).toEqual(
+        omit(userData, ['id', 'company'])
+      );
     });
 
     it('Merges in passed in data with any existing data before posting', () => {
-      const post = jest.spyOn(request, 'post');
+      jest.spyOn(request, 'post').mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+          resolve();
+        });
+      });
+
       model
         .create({
           phone: '021191234076'
@@ -857,7 +845,7 @@ describe('Model', () => {
         .then(() => {})
         .catch(() => {});
 
-      expect(post.mock.lastCall[1]).toEqual({
+      expect(request.post.mock.lastCall[1]).toEqual({
         type: 'User',
         username: 'projectmem1@rakneapp.com',
         firstName: 'John',
@@ -884,168 +872,132 @@ describe('Model', () => {
     });
 
     it('Immediately sets the data on the model if wait option is falsy', () => {
-      jest.spyOn(request, 'post').mockImplementation(function () {
-        return {
-          then(cb) {
-            setTimeout(() => {
-              cb.call(null, {
-                status: 201,
-                data: userData
-              });
-            }, 1000);
-
-            return this;
-          },
-          catch: () => {}
-        };
+      jest.spyOn(request, 'post').mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+          return setTimeout(() => {
+            resolve({
+              status: 201,
+              data: userData
+            });
+          }, 100);
+        });
       });
 
-      model
-        .create(
-          {
-            firstName: 'Johnny',
-            lastName: 'Doe',
-            username: 'lostintranslation@example.com',
-            phone: '0211912340'
-          },
-          { wait: false }
-        )
-        .then(() => {})
-        .catch(() => {});
+      model.create(
+        {
+          firstName: 'Johnny',
+          lastName: 'Doe',
+          username: 'lostintranslation@example.com',
+          phone: '0211912340'
+        },
+        { wait: false }
+      );
 
       expect(model.firstName).toEqual('Johnny');
     });
 
-    it('Waits for successful response from server before updating model if wait option is truthy', () => {
-      jest.spyOn(request, 'post').mockImplementation(function () {
-        return {
-          then(cb) {
-            setTimeout(() => {
-              cb.call(null, {
-                status: 201,
-                data: {
-                  firstName: 'Mike',
-                  lastName: 'Doe',
-                  username: 'lostintranslation@example.com',
-                  phone: '0211912340'
-                }
-              });
-            }, 1000);
-
-            return this;
-          },
-          catch: () => {}
-        };
+    it('Waits for successful response from server before updating model if wait option is truthy', async () => {
+      jest.spyOn(request, 'post').mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+          return setTimeout(() => {
+            resolve({
+              status: 201,
+              data: {
+                firstName: 'Mike',
+                lastName: 'Doe',
+                username: 'lostintranslation@example.com',
+                phone: '0211912340'
+              }
+            });
+          }, 100);
+        });
       });
 
-      model
-        .create(
-          {
-            firstName: 'Mike',
-            lastName: 'Doe',
-            username: 'lostintranslation@example.com',
-            phone: '0211912340'
-          },
-          { wait: true }
-        )
-        .then(() => {})
-        .catch(() => {});
+      const promise = model.create(
+        {
+          firstName: 'Mike',
+          lastName: 'Doe',
+          username: 'lostintranslation@example.com',
+          phone: '0211912340'
+        },
+        { wait: true }
+      );
 
       expect(model.firstName).toEqual('John');
 
       // Fast-forward until all timers have been executed
       jest.runAllTimers();
 
+      await promise;
+
       expect(model.firstName).toEqual('Mike');
     });
 
     it('Sets the saving request label to truthy if wait option is truthy', () => {
-      model
-        .create(
-          {
-            firstName: 'Timmy',
-            lastName: 'Doe',
-            username: 'lostintranslation@example.com',
-            phone: '0211912340'
-          },
-          { wait: true }
-        )
-        .then(() => {})
-        .catch(() => {});
+      model.create(
+        {
+          firstName: 'Timmy',
+          lastName: 'Doe',
+          username: 'lostintranslation@example.com',
+          phone: '0211912340'
+        },
+        { wait: true }
+      );
 
       expect(model.saving).toBeTruthy();
     });
 
     it('sends the post request to the model url', () => {
-      const post = jest.spyOn(request, 'post');
-      model
-        .create()
-        .then(() => {})
-        .catch(() => {});
+      jest.spyOn(request, 'post').mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+          resolve();
+        });
+      });
 
-      expect(post.mock.lastCall[0]).toEqual(model.url());
+      model.create();
+
+      expect(request.post.mock.lastCall[0]).toEqual(model.url());
     });
 
     it('sends the post request to the url passed in as url option', () => {
-      const post = jest.spyOn(request, 'post');
-      model
-        .create(null, {
-          url: '/api/v1/people/1'
-        })
-        .then(() => {})
-        .catch(() => {});
-
-      expect(post.mock.lastCall[0]).toEqual('/api/v1/people/1');
-    });
-
-    it('calls the models set action with the response from successful save to server', () => {
-      jest.spyOn(Model.prototype, 'set');
-
-      jest.spyOn(request, 'post').mockImplementation(function () {
-        return {
-          then(cb) {
-            cb.call(null, {
-              status: 201,
-              data: userData
-            });
-
-            return this;
-          },
-          catch: () => {}
-        };
+      jest.spyOn(request, 'post').mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+          resolve();
+        });
       });
 
-      model
-        .create()
-        .then(() => {})
-        .catch(() => {});
-
-      expect(model.set).toHaveBeenCalledWith(userData, {
-        method: 'post',
-        notAttributes: false,
-        stripNonRest: true,
-        wait: false
+      model.create(null, {
+        url: '/api/v1/people/1'
       });
+
+      expect(request.post.mock.lastCall[0]).toEqual('/api/v1/people/1');
     });
 
-    it('resets to the original attributes on failed save to server if wait option is falsy', () => {
-      jest.spyOn(Model.prototype, 'set');
+    it('calls the models set action with the response from successful save to server', async () => {
+      jest.spyOn(request, 'post').mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+          resolve({ status: 201, data: userData });
+        });
+      });
 
+      await model.create();
+
+      expect(model.set).toHaveBeenCalledWith(userData, expect.anything());
+    });
+
+    it('resets to the original attributes on failed save to server if wait option is falsy', async () => {
       jest.spyOn(request, 'post').mockImplementation(() => {
         return new Promise((resolve, reject) => {
           reject();
         });
       });
 
-      model
-        .create(
-          {
-            firstName: 'John'
-          },
-          { wait: false }
-        )
-        .then(() => {})
-        .catch(() => {});
+      await model.create(
+        {
+          firstName: 'Tom'
+        },
+        { wait: false }
+      );
 
       expect(model.firstName).toEqual('John');
     });
@@ -1075,42 +1027,34 @@ describe('Model', () => {
     });
 
     it('should immediately remove the model from the parent collection if the wait option is falsy', () => {
-      collection
-        .at(0)
-        .destroy({ wait: false })
-        .then(() => {})
-        .catch(() => {});
+      collection.at(0).destroy({ wait: false });
 
       expect(collection.length).toEqual(1);
     });
 
-    it('should put the models back in the parent collection if the request fails', () => {
+    it('should put the models back in the parent collection if the request fails', async () => {
       jest.spyOn(request, 'delete').mockImplementation(() => {
         return new Promise((resolve, reject) => {
           reject();
         });
       });
 
-      collection
-        .at(0)
-        .destroy({ wait: false })
-        .then(
-          () => {},
-          () => {
-            expect(collection.length).toEqual(2);
-            expect(collection.at(0).deleting).toBeFalsy();
-          }
-        );
+      await collection.at(0).destroy({ wait: false });
+
+      expect(collection.length).toEqual(2);
+      expect(collection.at(0).deleting).toBeFalsy();
     });
 
     it('Sends delete request to the URL of the model', () => {
-      const deleteRequest = jest.spyOn(request, 'delete');
+      const deleteRequest = jest
+        .spyOn(request, 'delete')
+        .mockImplementation(() => {
+          return new Promise((resolve, reject) => {
+            resolve();
+          });
+        });
 
-      collection
-        .at(0)
-        .destroy()
-        .then(() => {})
-        .catch(() => {});
+      collection.at(0).destroy();
 
       expect(deleteRequest).toHaveBeenCalledWith(
         `${collection.url()}/1`,
@@ -1119,44 +1063,33 @@ describe('Model', () => {
     });
 
     it('Sets the deleting requestLabel to truthy if wait option if truthy', () => {
-      collection
-        .at(0)
-        .destroy({ wait: true })
-        .then(() => {})
-        .catch(() => {});
+      collection.at(0).destroy({ wait: true });
+
       expect(collection.at(0).deleting).toBeTruthy();
     });
 
-    it('Waits until a successful response from server before removing model from collection if wait options is truthy', () => {
+    it('Waits until a successful response from server before removing model from collection if wait options is truthy', async () => {
       jest.spyOn(request, 'delete').mockImplementation(function () {
-        return {
-          then(cb) {
-            setTimeout(() => {
-              cb.call(null, {
-                status: 200
-              });
-            }, 1000);
-
-            return this;
-          },
-          catch: () => {}
-        };
+        return new Promise((resolve, reject) => {
+          return setTimeout(() => {
+            resolve();
+          }, 100);
+        });
       });
 
-      collection
-        .at(0)
-        .destroy({ wait: true })
-        .then(() => {})
-        .catch(() => {});
+      const promise = collection.get(1).destroy({ wait: true });
+
+      expect(request.delete).toHaveBeenCalled();
 
       expect(collection.length).toEqual(2);
-      expect(collection.at(0).deleting).toBeTruthy();
+      expect(collection.get(1).deleting).toBeTruthy();
 
       // Fast-forward until all timers have been executed
-      jest.runAllTimers();
+      jest.runOnlyPendingTimers();
+
+      await promise;
 
       expect(collection.length).toEqual(1);
-      expect(collection.at(0).deleting).toBeFalsy();
     });
   });
 

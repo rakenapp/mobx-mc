@@ -249,7 +249,7 @@ class Model {
    * Fetch the model from the server.
    */
   @action
-  fetch(options = {}) {
+  async fetch(options = {}) {
     // Merge in the any options with the default
     options = Object.assign(
       {
@@ -262,36 +262,26 @@ class Model {
 
     const url = options.url ? options.url : this.url();
 
-    return new Promise((resolve, reject) => {
-      request
-        .get(url, {
-          cancelToken: new CancelToken(cancel => {
-            // An executor function receives a cancel function as a parameter
-            this.requestCanceller = cancel;
-          }),
-          params: options.params ? options.params : {},
-          ...options.axios
-        })
-        .then(
-          response => {
-            runInAction(() => {
-              this.set(this.setRestAttributeDefaults(response.data), {
-                reset: options.reset
-              });
-              this.setRequestLabel('fetching', false);
-              resolve(this);
-            });
-          },
-          error => {
-            runInAction(() => {
-              this.setRequestLabel('fetching', false);
-              if (!request.isCancel(error)) {
-                reject(error);
-              }
-            });
-          }
-        );
-    });
+    try {
+      await request.get(url, {
+        cancelToken: new CancelToken(cancel => {
+          // An executor function receives a cancel function as a parameter
+          this.requestCanceller = cancel;
+        }),
+        params: options.params ? options.params : {},
+        ...options.axios
+      });
+
+      this.set(this.setRestAttributeDefaults(response.data), {
+        reset: options.reset
+      });
+    } catch (error) {
+      if (!request.isCancel(error)) {
+        return error;
+      }
+    } finally {
+      this.setRequestLabel('fetching', false);
+    }
   }
 
   /**
@@ -301,7 +291,7 @@ class Model {
    * update the data passed
    */
   @action
-  save(data = null, options) {
+  async save(data = null, options) {
     // Merge in the any options with the default
     options = Object.assign(
       {
@@ -336,36 +326,29 @@ class Model {
       this.set(data, options);
     }
 
-    return new Promise((resolve, reject) => {
-      request[options.method](
+    try {
+      const response = await request[options.method](
         options.url ? options.url : this.url(),
         data,
         options.axios
-      ).then(
-        response => {
-          runInAction(() => {
-            if (options.reset) {
-              this.set(response.data, options);
-            } else {
-              this.set(Object.assign({}, data, response.data), options);
-            }
-
-            this.setRequestLabel('saving', false);
-            resolve(this);
-          });
-        },
-        error => {
-          runInAction(() => {
-            if (!options.wait) {
-              this.set(originalAttributes, options);
-            }
-
-            this.setRequestLabel('saving', false);
-            reject(error);
-          });
-        }
       );
-    });
+
+      if (options.reset) {
+        this.set(response.data, options);
+      } else {
+        this.set(Object.assign({}, data, response.data), options);
+      }
+
+      return this;
+    } catch (error) {
+      if (!options.wait) {
+        this.set(originalAttributes, options);
+      }
+
+      return error;
+    } finally {
+      this.setRequestLabel('saving', false);
+    }
   }
 
   /**
@@ -374,7 +357,7 @@ class Model {
    * update the attributes and relationships passed in.
    */
   @action
-  create(data = null, options) {
+  async create(data = null, options) {
     // Merge in the any options with the default
     options = Object.assign(
       {
@@ -402,29 +385,23 @@ class Model {
       this.setRequestLabel('saving', true);
     }
 
-    return new Promise((resolve, reject) => {
-      request
-        .post(options.url ? options.url : this.url(), data, options.axios)
-        .then(
-          response => {
-            runInAction(() => {
-              this.set(response.data, options);
-              this.setRequestLabel('saving', false);
-              resolve(this);
-            });
-          },
-          error => {
-            runInAction(() => {
-              if (!options.wait) {
-                this.set(originalAttributes);
-              }
+    try {
+      const response = await request.post(
+        options.url ? options.url : this.url(),
+        data,
+        options.axios
+      );
 
-              this.setRequestLabel('saving', false);
-              reject(error);
-            });
-          }
-        );
-    });
+      this.set(response.data, options);
+    } catch (error) {
+      if (!options.wait) {
+        this.set(originalAttributes);
+      }
+
+      return error;
+    } finally {
+      this.setRequestLabel('saving', false);
+    }
   }
 
   /**
@@ -433,7 +410,7 @@ class Model {
    * If `wait: true` is passed, waits for the server to respond before removal.
    */
   @action
-  destroy(options) {
+  async destroy(options) {
     // Merge in the any options with the default
     options = Object.assign(
       {
@@ -454,35 +431,29 @@ class Model {
       this.setRequestLabel('deleting', true);
     }
 
-    return new Promise((resolve, reject) => {
-      request
-        .delete(options.url ? options.url : this.url(), options.axios)
-        .then(
-          response => {
-            runInAction(() => {
-              if (options.wait && this.collection) {
-                this.collection.remove(this);
-              }
-              this.setRequestLabel('deleting', false);
-              resolve(this);
-            });
-          },
-          error => {
-            runInAction(() => {
-              // Put it back if delete request fails
-              if (!options.wait && this.collection) {
-                if (error && error.response && error.response.status === 404)
-                  return;
+    try {
+      await request.delete(
+        options.url ? options.url : this.url(),
+        options.axios
+      );
 
-                this.collection.add(this);
-              }
+      if (options.wait && this.collection) {
+        this.collection.remove(this);
+      }
 
-              this.setRequestLabel('deleting', false);
-              reject(error);
-            });
-          }
-        );
-    });
+      return true;
+    } catch (error) {
+      // Put it back if delete request fails
+      if (!options.wait && this.collection) {
+        if (error && error.response && error.response.status === 404) return;
+
+        this.collection.add(this);
+      }
+
+      return error;
+    } finally {
+      this.setRequestLabel('deleting', false);
+    }
   }
 
   /**

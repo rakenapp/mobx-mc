@@ -34,8 +34,8 @@
     "lodash.pick": "^4.4.0",
     "lodash.pickby": "^4.6.0",
     "lodash.result": "^4.5.2",
-    "mobx": "^6.11.0",
-    "querystringify": "^2.1.1",
+    "mobx": "^6.12.4",
+    "querystringify": "^2.2.0",
     "uuid-v4": "^0.1.0"
   },
   "devDependencies": {
@@ -58,5 +58,6 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
-  }
+  },
+  "packageManager": "yarn@4.3.0"
 }
