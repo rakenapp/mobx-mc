@@ -300,7 +300,7 @@ class Collection {
 
     const instances = models.map(model => {
       // Get the type of Model
-      const CollectionModel = this.model(model.type);
+      const CollectionModel = this.model(model);
 
       if (model instanceof Model) {
         if (!(model instanceof CollectionModel)) {
