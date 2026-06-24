@@ -12,6 +12,8 @@ Mobx MC is a library inspired by both [Backbone](https://backbonejs.org/) and th
 
 Mobx MC:
 
+Important note the 2.1.x branch is the feature brach for the mobx 4 version of this repo.
+
 - Separates your domain state from your global state.
 - Makes the data observable so you can track values and derive from it.
 - Communicates with the server to fetch, save, and delete.
