@@ -1,9 +1,9 @@
 import uuid from 'uuid-v4';
-import result from 'lodash.result';
-import pickBy from 'lodash.pickby';
-import pick from 'lodash.pick';
-import omit from 'lodash.omit';
-import forIn from 'lodash.forin';
+import result from 'lodash/result';
+import pickBy from 'lodash/pickBy';
+import pick from 'lodash/pick';
+import omit from 'lodash/omit';
+import forIn from 'lodash/forIn';
 import { observable, action, runInAction, toJS } from 'mobx';
 import request, { CancelToken } from 'axios';
 import qs from 'querystringify';
