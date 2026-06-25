@@ -1,5 +1,5 @@
-import isEmpty from 'lodash.isempty';
-import difference from 'lodash.difference';
+import isEmpty from 'lodash/isEmpty';
+import difference from 'lodash/difference';
 import { action, observable, computed, runInAction } from 'mobx';
 import request, { CancelToken } from 'axios';
 import qs from 'querystringify';
@@ -262,7 +262,7 @@ class Collection {
         attributes[this.getModelIdAttribute(attributes.type)]
       );
       if (existingModel) {
-        originalAttributes.push(existingModel.attributes.toJS());
+        originalAttributes.push(existingModel.toJSON());
         existingModel.set(attributes);
       }
     });
@@ -410,8 +410,8 @@ class Collection {
           }),
           params: options.params,
           ...options.axios,
-          paramsSerializer: params => {
-            return qs.stringify(params);
+          paramsSerializer: {
+            serialize: params => qs.stringify(params)
           }
         })
         .then(

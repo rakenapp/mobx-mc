@@ -31,7 +31,7 @@ class UserCollection extends Collection {
 describe('Collection', () => {
   describe('constructor with no initial state', () => {
     beforeEach(() => {
-      spyOn(Collection.prototype, 'set');
+      jest.spyOn(Collection.prototype, 'set').mockImplementation(() => {});
 
       //main store of an App
       rootStore = {
@@ -69,7 +69,7 @@ describe('Collection', () => {
 
   describe('constructor with initial state', () => {
     beforeAll(() => {
-      spyOn(Collection.prototype, 'set');
+      jest.spyOn(Collection.prototype, 'set').mockImplementation(() => {});
     });
 
     beforeEach(() => {
@@ -187,7 +187,7 @@ describe('Collection', () => {
 
   describe('set action', () => {
     beforeEach(() => {
-      spyOn(Collection.prototype, 'setModels').and.callThrough();
+      jest.spyOn(Collection.prototype, 'setModels');
     });
 
     it('Calls the correct set method for each data type', () => {
@@ -377,7 +377,7 @@ describe('Collection', () => {
 
   describe('add action', () => {
     beforeEach(() => {
-      spyOn(Collection.prototype, 'setModels').and.callThrough();
+      jest.spyOn(Collection.prototype, 'setModels');
 
       collection = new UserCollection();
     });
@@ -622,7 +622,8 @@ describe('Collection', () => {
           'jsonapi/users/3c59d5f0-d958-4cd5-a81b-2a87d835921f',
           {
             cancelToken: expect.anything(),
-            params: {}
+            params: {},
+            paramsSerializer: expect.anything()
           }
         );
       });
@@ -678,7 +679,8 @@ describe('Collection', () => {
           'jsonapi/users/3c59d5f0-d958-4cd5-a81b-2a87d835921f',
           {
             cancelToken: expect.anything(),
-            params: {}
+            params: {},
+            paramsSerializer: expect.anything()
           }
         );
       });
@@ -753,7 +755,7 @@ describe('Collection', () => {
 
   describe('remove action', () => {
     beforeEach(() => {
-      spyOn(Collection.prototype, 'spliceModels').and.callThrough();
+      jest.spyOn(Collection.prototype, 'spliceModels');
       collection = new Collection(usersData);
     });
 
@@ -819,7 +821,7 @@ describe('Collection', () => {
     });
 
     it('Calls a get request with the collections url by default', () => {
-      spyOn(request, 'get');
+      jest.spyOn(request, 'get').mockImplementation(() => {});
 
       collection
         .fetch()
@@ -834,7 +836,7 @@ describe('Collection', () => {
     });
 
     it('Calls a get request with the url passed in though options', () => {
-      spyOn(request, 'get');
+      jest.spyOn(request, 'get').mockImplementation(() => {});
 
       collection
         .fetch({
@@ -851,7 +853,7 @@ describe('Collection', () => {
     });
 
     it('Sends any params included in the options argument', () => {
-      spyOn(request, 'get');
+      jest.spyOn(request, 'get').mockImplementation(() => {});
 
       collection
         .fetch({
@@ -870,9 +872,9 @@ describe('Collection', () => {
     });
 
     it('Calls the set action if the request is successful', () => {
-      spyOn(Collection.prototype, 'set');
+      jest.spyOn(Collection.prototype, 'set').mockImplementation(() => {});
 
-      spyOn(request, 'get').and.callFake(function() {
+      jest.spyOn(request, 'get').mockImplementation(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -901,9 +903,9 @@ describe('Collection', () => {
     });
 
     it('Passes the set options through to the set action', () => {
-      spyOn(Collection.prototype, 'set');
+      jest.spyOn(Collection.prototype, 'set').mockImplementation(() => {});
 
-      spyOn(request, 'get').and.callFake(function() {
+      jest.spyOn(request, 'get').mockImplementation(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -931,9 +933,9 @@ describe('Collection', () => {
     });
 
     it('allows for the individual set options to be overriden', () => {
-      spyOn(Collection.prototype, 'set');
+      jest.spyOn(Collection.prototype, 'set').mockImplementation(() => {});
 
-      spyOn(request, 'get').and.callFake(function() {
+      jest.spyOn(request, 'get').mockImplementation(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -961,7 +963,7 @@ describe('Collection', () => {
     });
 
     it('Sets the fetching request label to falsy if the request fails', () => {
-      spyOn(Collection.prototype, 'set');
+      jest.spyOn(Collection.prototype, 'set').mockImplementation(() => {});
 
       jest.spyOn(request, 'get').mockImplementation(() => {
         return new Promise((resolve, reject) => {
@@ -1002,7 +1004,7 @@ describe('Collection', () => {
     it('Creates a new model instance with the passed in data, returns instance once promise is resolved.', () => {
       collection = new Collection();
 
-      spyOn(request, 'post').and.callFake(function() {
+      jest.spyOn(request, 'post').mockImplementation(function() {
         return {
           then(cb) {
             cb.call(null, {
@@ -1031,7 +1033,7 @@ describe('Collection', () => {
     });
 
     it('Adds the new model to the collection immediately if wait options is falsy', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function() {
+      jest.spyOn(Model.prototype, 'create').mockImplementation(function() {
         return {
           then(cb) {
             setTimeout(() => {
@@ -1067,7 +1069,7 @@ describe('Collection', () => {
     });
 
     it('Adds the new model only after successful creation on server if wait options is truthy', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function() {
+      jest.spyOn(Model.prototype, 'create').mockImplementation(function() {
         return {
           then(cb) {
             setTimeout(() => {
@@ -1126,7 +1128,7 @@ describe('Collection', () => {
     });
 
     it('Calls the create action on the model with the collections URL', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function() {
+      jest.spyOn(Model.prototype, 'create').mockImplementation(function() {
         return {
           then() {
             return this;
@@ -1145,13 +1147,13 @@ describe('Collection', () => {
         phone: '012345678'
       });
 
-      expect(Model.prototype.create.calls.mostRecent().args[1].url).toEqual(
+      expect(Model.prototype.create.mock.lastCall[1].url).toEqual(
         collection.url()
       );
     });
 
     it('Sets the creating label to falsy after the model.create method completes successfuly', () => {
-      spyOn(Model.prototype, 'create').and.callFake(function() {
+      jest.spyOn(Model.prototype, 'create').mockImplementation(function() {
         return {
           then(cb) {
             setTimeout(() => {
@@ -1295,7 +1297,7 @@ describe('Collection', () => {
     });
 
     it('rollback to the original state if the request fails', async () => {
-      jest.spyOn(request, 'patch').mockImplementation(() => {
+      jest.spyOn(request, 'put').mockImplementation(() => {
         return new Promise((resolve, reject) => {
           reject();
         });
