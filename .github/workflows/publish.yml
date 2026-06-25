@@ -35,7 +35,9 @@ jobs:
 
       # With a Trusted Publisher configured on npmjs.com (see repo setup notes),
       # `npm publish` authenticates via OIDC — no NPM_TOKEN needed — and attaches provenance.
-      - run: npm publish
+      # --tag latest is explicit because a higher 5.x exists on the registry; without it
+      # npm refuses to implicitly move the `latest` tag onto this 2.x release.
+      - run: npm publish --tag latest
         # Token fallback: delete the `npm install -g` + this comment, drop `id-token`,
         # and use the line below with an NPM_TOKEN repo secret instead of Trusted Publishing:
         #   env:
