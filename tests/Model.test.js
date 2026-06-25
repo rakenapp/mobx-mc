@@ -140,7 +140,8 @@ describe('Model', () => {
 
       expect(request.get).toHaveBeenCalledWith('/api/v1/users/2017-11-13', {
         cancelToken: expect.anything(),
-        params: {}
+        params: {},
+        paramsSerializer: expect.anything()
       });
     });
   });
@@ -469,7 +470,8 @@ describe('Model', () => {
 
       expect(request.get).toHaveBeenCalledWith(model.url(), {
         cancelToken: expect.anything(),
-        params: {}
+        params: {},
+        paramsSerializer: expect.anything()
       });
     });
 
@@ -485,7 +487,8 @@ describe('Model', () => {
 
       expect(request.get).toHaveBeenCalledWith('/api/users/1', {
         cancelToken: expect.anything(),
-        params: {}
+        params: {},
+        paramsSerializer: expect.anything()
       });
     });
 
@@ -503,7 +506,8 @@ describe('Model', () => {
 
       expect(request.get).toHaveBeenCalledWith(model.url(), {
         cancelToken: expect.anything(),
-        params: { included: 'companies' }
+        params: { included: 'companies' },
+        paramsSerializer: expect.anything()
       });
     });
 

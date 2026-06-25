@@ -622,7 +622,8 @@ describe('Collection', () => {
           'jsonapi/users/3c59d5f0-d958-4cd5-a81b-2a87d835921f',
           {
             cancelToken: expect.anything(),
-            params: {}
+            params: {},
+            paramsSerializer: expect.anything()
           }
         );
       });
@@ -678,7 +679,8 @@ describe('Collection', () => {
           'jsonapi/users/3c59d5f0-d958-4cd5-a81b-2a87d835921f',
           {
             cancelToken: expect.anything(),
-            params: {}
+            params: {},
+            paramsSerializer: expect.anything()
           }
         );
       });

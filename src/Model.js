@@ -6,6 +6,7 @@ import omit from 'lodash.omit';
 import forIn from 'lodash.forin';
 import { observable, action, runInAction, toJS } from 'mobx';
 import request, { CancelToken } from 'axios';
+import qs from 'querystringify';
 
 // Throw an error when a URL is needed, and none is supplied.
 const urlError = () => {
@@ -270,7 +271,10 @@ class Model {
             this.requestCanceller = cancel;
           }),
           params: options.params ? options.params : {},
-          ...options.axios
+          ...options.axios,
+          paramsSerializer: {
+            serialize: params => qs.stringify(params)
+          }
         })
         .then(
           response => {

@@ -410,8 +410,8 @@ class Collection {
           }),
           params: options.params,
           ...options.axios,
-          paramsSerializer: params => {
-            return qs.stringify(params);
+          paramsSerializer: {
+            serialize: params => qs.stringify(params)
           }
         })
         .then(
