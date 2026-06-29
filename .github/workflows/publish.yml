@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write # required for npm Trusted Publishing (OIDC) + provenance
 
 jobs:
   publish:
@@ -20,6 +21,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: yarn
 
+      # Trusted Publishing needs npm >= 11.5.1; Node 22 ships an older npm.
+      - run: npm install -g npm@latest
+
       - run: yarn install --frozen-lockfile
 
       - name: Verify tag matches package.json version
@@ -29,8 +33,8 @@ jobs:
 
       - run: yarn test
 
-      # --tag latest is explicit because a higher 5.x exists on the registry; without it
+      # Authenticates via OIDC against the Trusted Publisher configured on npmjs.com
+      # (rakenapp/mobx-mc + publish.yml) — no NPM_TOKEN — and attaches provenance.
+      # --tag latest is explicit because higher 3.x/4.x/5.x versions exist; without it
       # npm refuses to implicitly move the `latest` tag onto this 2.x release.
       - run: npm publish --tag latest
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
